@@ -28,6 +28,8 @@ docker compose up -d --build
 
 ใน `.env` ให้ตั้ง `POSTGRES_PASSWORD` และ `AIRFLOW_ADMIN_PASSWORD` เป็นรหัสผ่านตัวอักษร/ตัวเลขที่เลือกเองก่อนรัน Docker ไฟล์ `.env` จะไม่ถูกอัปโหลดขึ้น GitHub เมื่อบริการพร้อม เปิดเว็บวิเคราะห์ที่ `localhost:8090` และ Airflow ที่ `localhost:8088` (ผู้ใช้ `admin`, รหัสผ่าน `AIRFLOW_ADMIN_PASSWORD`) จากนั้นเลือก DAG `thailand_weather_daily` เพื่อตรวจงานประจำวัน ฐานข้อมูลสำหรับ DBeaver คือ `weather`, ผู้ใช้ `airflow`, รหัสผ่าน `POSTGRES_PASSWORD`; ดู [ตัวอย่าง SQL และวิธีเชื่อมต่อ](database/README_TH.md)
 
+เมื่อเริ่มบน Docker volume ใหม่ บริการ `seed-postgres` จะนำเข้า CSV ที่มากับโครงการลง PostgreSQL ก่อนเปิด Airflow และเว็บ ขั้นตอนแรกอาจใช้เวลาหลายนาที ตรวจความคืบหน้าด้วย `docker compose logs -f seed-postgres` หากฐานมีข้อมูลอยู่แล้ว ระบบจะข้ามการนำเข้าเพื่อไม่สร้างข้อมูลซ้ำ
+
 หากต้องการเติมวันที่ยังขาดทันที ให้สั่ง:
 
 ```powershell
@@ -82,6 +84,7 @@ Airflow ใช้งานตามลำดับ `plan_missing_days → extrac
 | [คู่มือ Power BI](powerbi/README.md) | เปิดรายงาน เปลี่ยนที่อยู่ CSV และ Refresh |
 | [การออกแบบ Pipeline](DESIGN.md) | ตารางข้อมูล กฎคุณภาพ และเหตุผลการออกแบบ |
 | [ผลตรวจข้อมูลย้อนหลัง](RESULTS_TH.md) | ผลตรวจช่วงปี 2018–2025 |
+| [รายงานตรวจความถูกต้องล่าสุด](audit/AUDIT_TH.md) | ตรวจทุกแถว เทียบข้อมูลดิบกับฐานข้อมูล และวัดความแม่นของการประเมินฝน |
 
 ทดสอบโค้ดด้วย `python -m unittest discover -s tests -q` หากต้องการหยุดบริการในเครื่อง ใช้ `docker compose stop`
 

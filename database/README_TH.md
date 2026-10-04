@@ -57,3 +57,5 @@ ORDER BY d.weather_date;
 ```
 
 ตารางรายชั่วโมงมีหลายล้านแถว โปรแกรมฐานข้อมูลจะแสดงทีละหน้า ส่วนไฟล์ `export/fact_weather_hourly_YYYY.csv` แยกทุกปีเพื่อเปิดดูข้อมูลทั้งหมด โดยแต่ละไฟล์มีแถวน้อยกว่าขีดจำกัดของ Excel หากต้องการส่งออกใหม่หลัง Airflow เพิ่มข้อมูล ให้รัน `python database/export_all_hourly.py` ในโฟลเดอร์โครงการ
+
+หากต้องการส่งออกเฉพาะปีที่เพิ่งมีข้อมูลเพิ่ม ใช้ `python database/export_all_hourly.py --year 2026` หลังตั้งค่า `PGPASSWORD` หรือ `POSTGRES_PASSWORD` สำหรับการเชื่อมต่อ PostgreSQL ไฟล์ปี 2026 ที่เผยแพร่ล่าสุดมีข้อมูลถึง 26 กันยายน 2026 และผลตรวจละเอียดอยู่ใน [รายงาน audit](../audit/AUDIT_TH.md)

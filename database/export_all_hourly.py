@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import argparse
 import os
 from pathlib import Path
 
@@ -14,6 +15,9 @@ OUT = ROOT / "export"
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--year", type=int, help="Export only the selected year")
+    args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     password = os.getenv("PGPASSWORD") or os.getenv("POSTGRES_PASSWORD")
     if not password:
@@ -32,6 +36,10 @@ def main() -> None:
                 "FROM fact_weather_hourly GROUP BY 1 ORDER BY 1"
             )
             expected = dict(cursor.fetchall())
+            if args.year is not None:
+                if args.year not in expected:
+                    raise ValueError(f"No hourly rows for {args.year}")
+                expected = {args.year: expected[args.year]}
 
             for year, row_count in expected.items():
                 target = OUT / f"fact_weather_hourly_{year}.csv"

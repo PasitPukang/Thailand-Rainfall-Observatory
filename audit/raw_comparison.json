@@ -1,0 +1,11 @@
+{
+  "compared_hourly_rows": 5896968,
+  "raw_files_used": 770,
+  "mismatches": {
+    "time": 0,
+    "precipitation_mm": 0,
+    "temperature_c": 0,
+    "relative_humidity_pct": 0,
+    "wind_speed_kmh": 0
+  }
+}

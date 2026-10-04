@@ -16,11 +16,23 @@ services:
       timeout: 5s
       retries: 10
 
-  airflow-init:
+  seed-postgres:
     build: .
     depends_on:
       postgres:
         condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg2://airflow:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/weather
+      PYTHONPATH: /opt/airflow/project
+    volumes:
+      - ./:/opt/airflow/project:ro
+    command: bash -c 'python -m database.seed_postgres'
+
+  airflow-init:
+    build: .
+    depends_on:
+      seed-postgres:
+        condition: service_completed_successfully
     environment: &airflow_env
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/airflow
@@ -64,8 +76,8 @@ services:
       context: .
       dockerfile: web/Dockerfile
     depends_on:
-      postgres:
-        condition: service_healthy
+      seed-postgres:
+        condition: service_completed_successfully
     environment:
       DATABASE_URL: postgresql+psycopg2://airflow:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/weather
       PROJECT_ROOT: /project
