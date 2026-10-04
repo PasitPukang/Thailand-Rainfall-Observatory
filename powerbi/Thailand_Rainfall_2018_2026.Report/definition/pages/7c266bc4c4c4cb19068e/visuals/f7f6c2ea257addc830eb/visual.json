@@ -23,11 +23,11 @@
                       "Entity": "dim_province"
                     }
                   },
-                  "Property": "Total Rainfall (mm)"
+                  "Property": "Rainfall per point (mm)"
                 }
               },
-              "queryRef": "dim_province.Total Rainfall (mm)",
-              "nativeQueryRef": "Total Rainfall (mm)"
+              "queryRef": "dim_province.Rainfall per point (mm)",
+              "nativeQueryRef": "Rainfall per point (mm)"
             }
           ]
         }
@@ -42,7 +42,7 @@
                     "Entity": "dim_province"
                   }
                 },
-                "Property": "Total Rainfall (mm)"
+                "Property": "Rainfall per point (mm)"
               }
             },
             "direction": "Descending"
@@ -66,7 +66,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'ฝนสะสม · รวมจุดที่เลือก'"
+                  "Value": "'ฝนสะสม · เฉลี่ยต่อจุด'"
                 }
               }
             },
@@ -111,7 +111,7 @@
                 "Entity": "dim_province"
               }
             },
-            "Property": "Total Rainfall (mm)"
+            "Property": "Rainfall per point (mm)"
           }
         },
         "type": "Advanced"

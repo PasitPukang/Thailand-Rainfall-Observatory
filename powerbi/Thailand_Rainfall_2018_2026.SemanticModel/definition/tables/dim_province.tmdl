@@ -14,6 +14,24 @@ table dim_province
 		formatString: 0
 		lineageTag: fbe30962-d86d-4aae-ab6e-deb6106a15fb
 
+	measure 'Rainfall per point (mm)' = DIVIDE(SUM('mart_weather_daily'[rainfall_mm]), DISTINCTCOUNT('dim_province'[province_id]))
+		lineageTag: 8d28a9f5-d477-4020-9cc5-85bf662e2fa1
+
+	measure 'Heavy Days per point' = DIVIDE([Heavy Rain Days], DISTINCTCOUNT('dim_province'[province_id]))
+		lineageTag: fd5098d1-f85c-4bb8-a216-1921bbda4947
+
+	measure 'Very Heavy Days per point' = DIVIDE([Very Heavy Rain Days], DISTINCTCOUNT('dim_province'[province_id]))
+		lineageTag: d73fe0cb-9106-4df5-bf6c-fb8f6f73ab6e
+
+	measure 'Average Temperature (C)' = AVERAGE('mart_weather_daily'[average_temperature_c])
+		lineageTag: 80e94415-81be-4520-af7f-69eea1429bd1
+
+	measure 'Average Humidity (%)' = AVERAGE('mart_weather_daily'[average_humidity_pct])
+		lineageTag: b4fca8b0-112f-4885-a5b4-c8d84040cb44
+
+	measure 'Average Daily Max Wind (km/h)' = AVERAGE('mart_weather_daily'[maximum_wind_kmh])
+		lineageTag: 4ad3a1e8-1e10-435a-a24b-a59d6458b018
+
 	column province_id
 		dataType: int64
 		formatString: 0
@@ -55,7 +73,7 @@ table dim_province
 		mode: import
 		source =
 				let
-				    Source = Csv.Document(File.Contents("powerbi/export/dim_province.csv"),[Delimiter=",", Columns=4, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    Source = Csv.Document(File.Contents("R:\powerbi\export\dim_province.csv"),[Delimiter=",", Columns=4, Encoding=65001, QuoteStyle=QuoteStyle.None]),
 				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
 				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"province_id", Int64.Type}, {"province_name", type text}, {"latitude", type number}, {"longitude", type number}})
 				in

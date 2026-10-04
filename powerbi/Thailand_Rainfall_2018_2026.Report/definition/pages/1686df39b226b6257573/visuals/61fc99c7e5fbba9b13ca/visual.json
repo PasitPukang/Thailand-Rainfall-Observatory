@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "fd314105e6033b0ab04c",
+  "name": "61fc99c7e5fbba9b13ca",
   "position": {
-    "x": 40,
-    "y": 160,
+    "x": 1136,
+    "y": 180,
     "z": 0,
-    "height": 150,
-    "width": 280,
-    "tabOrder": 160
+    "height": 130,
+    "width": 258,
+    "tabOrder": 180
   },
   "visual": {
     "visualType": "cardVisual",
@@ -23,11 +23,11 @@
                       "Entity": "dim_province"
                     }
                   },
-                  "Property": "Heavy Days per point"
+                  "Property": "Average Humidity (%)"
                 }
               },
-              "queryRef": "dim_province.Heavy Days per point",
-              "nativeQueryRef": "Heavy Days per point"
+              "queryRef": "dim_province.Average Humidity (%)",
+              "nativeQueryRef": "Average Humidity (%)"
             }
           ]
         }
@@ -42,7 +42,7 @@
                     "Entity": "dim_province"
                   }
                 },
-                "Property": "Heavy Days per point"
+                "Property": "Average Humidity (%)"
               }
             },
             "direction": "Descending"
@@ -66,7 +66,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'วันฝนหนัก · เฉลี่ยต่อจุด'"
+                  "Value": "'ความชื้นเฉลี่ย (%)'"
                 }
               }
             },
@@ -111,7 +111,7 @@
                 "Entity": "dim_province"
               }
             },
-            "Property": "Heavy Days per point"
+            "Property": "Average Humidity (%)"
           }
         },
         "type": "Advanced"

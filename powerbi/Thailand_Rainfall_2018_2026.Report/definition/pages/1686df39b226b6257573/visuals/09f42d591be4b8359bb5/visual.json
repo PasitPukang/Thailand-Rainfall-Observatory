@@ -1,11 +1,11 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "e4bdfbc86070ecc30b70",
+  "name": "09f42d591be4b8359bb5",
   "position": {
     "x": 40,
     "y": 350,
     "z": 4,
-    "height": 365,
+    "height": 280,
     "width": 660,
     "tabOrder": 350
   },
@@ -53,11 +53,11 @@
                       "Entity": "dim_province"
                     }
                   },
-                  "Property": "Rainfall per point (mm)"
+                  "Property": "Heavy Days per point"
                 }
               },
-              "queryRef": "dim_province.Rainfall per point (mm)",
-              "nativeQueryRef": "Rainfall per point (mm)"
+              "queryRef": "dim_province.Heavy Days per point",
+              "nativeQueryRef": "Heavy Days per point"
             }
           ]
         }
@@ -107,7 +107,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'ฝนสะสมเฉลี่ยต่อจุดรายปี | 2026 ยังไม่ครบปี'"
+                  "Value": "'วันฝนหนักรายปี · 2026 ยังไม่ครบปี'"
                 }
               }
             },
@@ -177,7 +177,7 @@
                 "Entity": "dim_province"
               }
             },
-            "Property": "Rainfall per point (mm)"
+            "Property": "Heavy Days per point"
           }
         },
         "type": "Advanced"

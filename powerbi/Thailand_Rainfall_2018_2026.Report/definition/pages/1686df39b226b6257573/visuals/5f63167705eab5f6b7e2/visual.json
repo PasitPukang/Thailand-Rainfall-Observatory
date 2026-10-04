@@ -1,55 +1,53 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "fd314105e6033b0ab04c",
+  "name": "5f63167705eab5f6b7e2",
   "position": {
-    "x": 40,
-    "y": 160,
-    "z": 0,
-    "height": 150,
-    "width": 280,
-    "tabOrder": 160
+    "x": 1040,
+    "y": 24,
+    "z": 5,
+    "height": 135,
+    "width": 360,
+    "tabOrder": 24
   },
   "visual": {
-    "visualType": "cardVisual",
+    "visualType": "slicer",
     "query": {
       "queryState": {
-        "Data": {
+        "Values": {
           "projections": [
             {
               "field": {
-                "Measure": {
+                "Column": {
                   "Expression": {
                     "SourceRef": {
                       "Entity": "dim_province"
                     }
                   },
-                  "Property": "Heavy Days per point"
+                  "Property": "province_name"
                 }
               },
-              "queryRef": "dim_province.Heavy Days per point",
-              "nativeQueryRef": "Heavy Days per point"
+              "queryRef": "dim_province.province_name",
+              "nativeQueryRef": "province_name",
+              "active": true
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "dim_province"
-                  }
-                },
-                "Property": "Heavy Days per point"
-              }
-            },
-            "direction": "Descending"
-          }
-        ],
-        "isDefaultSort": true
       }
+    },
+    "objects": {
+      "data": [
+        {
+          "properties": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Dropdown'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true,
     "visualContainerObjects": {
@@ -66,7 +64,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'วันฝนหนัก · เฉลี่ยต่อจุด'"
+                  "Value": "'เลือกจังหวัด'"
                 }
               }
             },
@@ -103,18 +101,18 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "da91f98404387b1c20d0",
+        "name": "d3b40827295c3c501ea3",
         "field": {
-          "Measure": {
+          "Column": {
             "Expression": {
               "SourceRef": {
                 "Entity": "dim_province"
               }
             },
-            "Property": "Heavy Days per point"
+            "Property": "province_name"
           }
         },
-        "type": "Advanced"
+        "type": "Categorical"
       }
     ]
   }

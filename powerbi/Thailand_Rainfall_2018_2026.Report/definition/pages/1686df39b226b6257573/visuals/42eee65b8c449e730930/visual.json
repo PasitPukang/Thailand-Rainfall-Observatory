@@ -1,0 +1,55 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "42eee65b8c449e730930",
+  "position": {
+    "x": 42,
+    "y": 1010,
+    "z": 1110,
+    "height": 40,
+    "width": 1350,
+    "tabOrder": 1030
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "แหล่งข้อมูล: Open-Meteo ERA5 · จุดตัวแทนหนึ่งจุดต่อจังหวัด · ปี 2026 ไม่เต็มปี; การเทียบช่วงเวลาเท่ากันอยู่ในเว็บวิเคราะห์",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "10pt",
+                      "fontWeight": "normal",
+                      "color": "#6E8594"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "left"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

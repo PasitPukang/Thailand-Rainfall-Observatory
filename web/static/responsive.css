@@ -26,3 +26,13 @@
 .today-meter span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #498fce, #41d5c3); border-radius: inherit; transition: width .35s ease; }
 .today-caveat { margin: 9px 3px 19px; color: var(--muted); font-size: 11px; line-height: 1.6; }
 @media (max-width: 760px) { .today-card { grid-template-columns: 1fr; gap: 16px; padding: 20px; } .today-result { text-align: left; } .today-probability { justify-content: flex-start; } }
+
+.comparison-panel { margin-top: 14px; }
+.analysis-select { max-width: 380px; margin: 0 0 18px; }
+.analysis-table { width: 100%; border-collapse: collapse; min-width: 580px; font-size: 13px; }
+.analysis-table th, .analysis-table td { border-top: 1px solid var(--line); padding: 11px 9px; text-align: right; white-space: nowrap; }
+.analysis-table th:first-child, .analysis-table td:first-child { text-align: left; }
+.analysis-table th { color: var(--muted); font-weight: 600; }
+.analysis-table tr.current-year { color: var(--teal); font-weight: 700; background: #143b45; }
+.weather-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+@media (max-width: 1100px) { .weather-grid { grid-template-columns: 1fr; } }

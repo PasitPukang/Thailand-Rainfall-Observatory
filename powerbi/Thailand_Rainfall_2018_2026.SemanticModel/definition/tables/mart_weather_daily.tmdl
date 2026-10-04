@@ -97,7 +97,7 @@ table mart_weather_daily
 		mode: import
 		source =
 				let
-				    Source = Csv.Document(File.Contents("powerbi/export/mart_weather_daily.csv"),[Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    Source = Csv.Document(File.Contents("R:\powerbi\export\mart_weather_daily.csv"),[Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.None]),
 				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
 				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"province_id", Int64.Type}, {"weather_date", type date}, {"rainfall_mm", type number}, {"average_temperature_c", type number}, {"maximum_temperature_c", type number}, {"average_humidity_pct", type number}, {"maximum_wind_kmh", type number}, {"observed_hours", Int64.Type}, {"rain_class", type text}})
 				in

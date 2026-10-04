@@ -21,3 +21,18 @@ AVERAGEX(
     VALUES('Date'[Year]),
     [Heavy rain days]
 )
+
+-- When all provinces are selected, report the mean across representative points.
+-- With one province selected, these equal that point's total/count.
+Rainfall per point (mm) =
+DIVIDE([Rainfall (mm)], DISTINCTCOUNT(dim_province[province_id]))
+
+Heavy Days per point =
+DIVIDE([Heavy rain days], DISTINCTCOUNT(dim_province[province_id]))
+
+Very Heavy Days per point =
+DIVIDE([Very heavy rain days], DISTINCTCOUNT(dim_province[province_id]))
+
+Average Humidity (%) = AVERAGE(mart_weather_daily[average_humidity_pct])
+
+Average Daily Max Wind (km/h) = AVERAGE(mart_weather_daily[maximum_wind_kmh])

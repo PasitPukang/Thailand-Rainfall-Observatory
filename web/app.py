@@ -13,6 +13,8 @@ from zoneinfo import ZoneInfo
 from flask import Flask, abort, jsonify, render_template, request, send_file
 from sqlalchemy import create_engine, text
 
+from .analysis import build_trend_analysis
+
 
 ROOT = Path(os.getenv("PROJECT_ROOT", Path(__file__).resolve().parents[1]))
 engine = create_engine(os.environ["DATABASE_URL"], pool_pre_ping=True)
@@ -27,6 +29,8 @@ DOWNLOADS = {
     "database_guide": ROOT / "database/README_TH.md",
     "powerbi_guide": ROOT / "powerbi/README.md",
     "web_guide": ROOT / "web/README_TH.md",
+    "topic_audit": ROOT / "audit/TOPIC_COVERAGE_TH.md",
+    "data_audit": ROOT / "audit/AUDIT_TH.md",
 }
 
 
@@ -168,6 +172,10 @@ def dashboard():
             daily_rows = [dict(row) for row in conn.execute(text("""
                 SELECT weather_date AS day, AVG(rainfall_mm) AS rainfall,
                        AVG(average_temperature_c) AS temperature,
+                       AVG(average_humidity_pct) AS humidity,
+                       AVG(maximum_wind_kmh) AS wind,
+                       COUNT(*) FILTER (WHERE rain_class IN ('heavy', 'very_heavy')) AS heavy_points,
+                       COUNT(*) FILTER (WHERE rain_class = 'very_heavy') AS very_heavy_points,
                        COUNT(*) AS province_count
                 FROM mart_weather_daily
                 GROUP BY weather_date ORDER BY weather_date
@@ -176,6 +184,10 @@ def dashboard():
             daily_rows = [dict(row) for row in conn.execute(text("""
                 SELECT weather_date AS day, rainfall_mm AS rainfall,
                        average_temperature_c AS temperature,
+                       average_humidity_pct AS humidity,
+                       maximum_wind_kmh AS wind,
+                       CASE WHEN rain_class IN ('heavy', 'very_heavy') THEN 1 ELSE 0 END AS heavy_points,
+                       CASE WHEN rain_class = 'very_heavy' THEN 1 ELSE 0 END AS very_heavy_points,
                        1 AS province_count
                 FROM mart_weather_daily WHERE province_id = :province_id
                 ORDER BY weather_date
@@ -237,6 +249,7 @@ def dashboard():
         "annual": [{"year": year, "rainfall_mm": round(value, 1), "complete": year < latest_year} for year, value in sorted(annual.items())],
         "ranking": [{**row, "heavy_days": int(row["heavy_days"]), "rainfall_mm": float(row["rainfall_mm"])} for row in ranking],
         "forecast": forecast(daily_rows, last_date),
+        "analysis": build_trend_analysis(daily_rows, last_date, province_id is None),
         "today_rain": today_rain_outlook(history_rain, today, province_id, last_date),
         "files": file_inventory(),
     }

@@ -1,5 +1,6 @@
 const $ = (id) => document.getElementById(id);
 const fmt = (value) => Number(value ?? 0).toLocaleString('th-TH', { maximumFractionDigits: 1 });
+const fmtDays = (value) => Number(value ?? 0).toLocaleString('th-TH', { maximumFractionDigits: 2 });
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 let currentView = 'dashboard';
@@ -8,7 +9,7 @@ function setView(view) {
   currentView = view;
   document.querySelectorAll('.view').forEach((el) => el.classList.toggle('active', el.id === view));
   document.querySelectorAll('.nav-item').forEach((el) => el.classList.toggle('active', el.dataset.view === view));
-  $('view-title').textContent = ({ dashboard: 'ภาพรวมข้อมูล', forecast: 'แนวโน้มและประมาณการ', pipeline: 'การทำงานของ Pipeline', manual: 'คู่มือและแหล่งข้อมูล' })[view];
+  $('view-title').textContent = ({ dashboard: 'ภาพรวมข้อมูล', analysis: 'วิเคราะห์ฝนหนักรายจังหวัด', forecast: 'แนวโน้มและประมาณการ', pipeline: 'การทำงานของ Pipeline', manual: 'คู่มือและแหล่งข้อมูล' })[view];
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -25,7 +26,7 @@ function lineChart(rows) {
   return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="กราฟฝนรายวัน"><defs><linearGradient id="rainGradient" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#41d5c3" stop-opacity=".35"/><stop offset="1" stop-color="#41d5c3" stop-opacity="0"/></linearGradient></defs>${ticks}<path class="area" d="${area}"/><path class="line" d="${line}"/>${labels}</svg>`;
 }
 
-function barChart(rows, key, label, partialKey) {
+function barChart(rows, key, label, partialKey, unit = 'มม.') {
   if (!rows.length) return '<p class="muted">ไม่มีข้อมูล</p>';
   const w = 560, h = 215, left = 36, right = 10, top = 12, bottom = 34;
   const inner = w - left - right;
@@ -33,7 +34,7 @@ function barChart(rows, key, label, partialKey) {
   const slot = inner / rows.length, width = Math.min(34, slot * .62);
   const y = (v) => h - bottom - (v / max) * (h - top - bottom);
   const ticks = [0, .5, 1].map((part) => `<line class="gridline" x1="${left}" y1="${y(max * part)}" x2="${w - right}" y2="${y(max * part)}"/><text class="axis" x="${left - 6}" y="${y(max * part) + 4}" text-anchor="end">${fmt(max * part)}</text>`).join('');
-  const bars = rows.map((r, i) => { const cx = left + slot * (i + .5), value = Number(r[key]), barHeight = h - bottom - y(value); return `<rect class="bar ${partialKey && !r[partialKey] ? 'partial' : ''}" x="${cx - width / 2}" y="${y(value)}" width="${width}" height="${Math.max(1, barHeight)}" rx="3"><title>${esc(label(r))}: ${fmt(value)} มม.</title></rect><text class="axis" x="${cx}" y="${h - 8}" text-anchor="middle">${esc(label(r))}</text>`; }).join('');
+  const bars = rows.map((r, i) => { const cx = left + slot * (i + .5), value = Number(r[key]), barHeight = h - bottom - y(value); return `<rect class="bar ${partialKey && !r[partialKey] ? 'partial' : ''}" x="${cx - width / 2}" y="${y(value)}" width="${width}" height="${Math.max(1, barHeight)}" rx="3"><title>${esc(label(r))}: ${fmt(value)} ${esc(unit)}</title></rect><text class="axis" x="${cx}" y="${h - 8}" text-anchor="middle">${esc(label(r))}</text>`; }).join('');
   return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="กราฟแท่งปริมาณฝน">${ticks}${bars}</svg>`;
 }
 
@@ -45,6 +46,27 @@ function renderForecast(data) {
     return `<article class="forecast-card"><div class="month">${months[item.month - 1]} ${item.year + 543}</div><strong>${fmt(item.estimate_mm)} <span style="font-size:1rem;color:var(--muted)">มม.</span></strong><div class="measure">ค่ากลางฝนรวมรายเดือน</div><div class="range"><div class="band" style="left:${low}%;width:${Math.max(1, high - low)}%"></div><div class="marker" style="left:${median}%"></div></div><div class="range-label"><span>${fmt(item.low_mm)} มม.</span><span>${fmt(item.high_mm)} มม.</span></div><div class="error">ทดสอบย้อนหลัง ${item.history_years} ปี · MAE <b>${fmt(item.backtest_mae_mm)} มม.</b></div></article>`;
   }).join('');
   $('forecast-cards').innerHTML = cards || '<div class="panel">ข้อมูลย้อนหลังยังไม่พอสำหรับประมาณการ</div>';
+}
+
+function renderAnalysis(data) {
+  const item = data.analysis;
+  const period = item.same_period;
+  const current = period.current;
+  $('analysis-basis').textContent = item.basis === 'mean_per_province_point'
+    ? 'ภาพรวม: ค่าเฉลี่ยต่อจุดตัวแทน 77 จังหวัด' : `จุดตัวแทนจังหวัด${data.selected_name}`;
+  $('heavy-current-label').textContent = `วันฝนหนักปี ${period.current_year + 543} · ช่วงเดียวกัน`;
+  $('heavy-current').textContent = current ? fmtDays(current.heavy_days) : '—';
+  $('heavy-baseline').textContent = period.historical_median_heavy_days == null ? '—' : fmtDays(period.historical_median_heavy_days);
+  $('heavy-change').textContent = period.heavy_change_pct == null ? 'เทียบไม่ได้' : `${period.heavy_change_pct > 0 ? '+' : ''}${fmt(period.heavy_change_pct)}%`;
+  $('heavy-period').textContent = `1 ม.ค.–${period.through.slice(3)} ${months[Number(period.through.slice(0, 2)) - 1]} · ${period.days} วัน`;
+  $('very-heavy-current').textContent = current ? fmtDays(current.very_heavy_days) : '—';
+  $('comparison-range').textContent = `ช่วงเดียวกัน ${period.days} วัน`;
+  $('heavy-annual-chart').innerHTML = barChart(item.annual, 'heavy_days', (r) => String(r.year + 543), 'complete', 'วัน');
+  $('heavy-month-chart').innerHTML = barChart(item.seasonal_heavy, 'heavy_days_per_year', (r) => months[r.month - 1], null, 'วัน/ปี');
+  $('temperature-chart').innerHTML = barChart(item.annual, 'average_temperature_c', (r) => String(r.year + 543), 'complete', '°C');
+  $('humidity-chart').innerHTML = barChart(item.annual, 'average_humidity_pct', (r) => String(r.year + 543), 'complete', '%');
+  $('wind-chart').innerHTML = barChart(item.annual, 'average_daily_max_wind_kmh', (r) => String(r.year + 543), 'complete', 'กม./ชม.');
+  $('comparison-rows').innerHTML = period.years.map((r) => `<tr class="${r.year === period.current_year ? 'current-year' : ''}"><td>${r.year + 543}</td><td>${fmtDays(r.heavy_days)}</td><td>${fmtDays(r.very_heavy_days)}</td><td>${fmt(r.rainfall_mm)}</td><td>${fmt(r.average_temperature_c)}</td></tr>`).join('');
 }
 
 function renderRanking(items) {
@@ -80,8 +102,13 @@ function renderToday(outlook, place) {
 
 function render(data) {
   if ($('province').options.length === 1) {
-    data.provinces.forEach((p) => { const option = document.createElement('option'); option.value = p.province_id; option.textContent = p.province_name; $('province').append(option); });
+    data.provinces.forEach((p) => {
+      for (const id of ['province', 'analysis-province']) {
+        const option = document.createElement('option'); option.value = p.province_id; option.textContent = p.province_name; $(id).append(option);
+      }
+    });
   }
+  $('analysis-province').value = $('province').value;
   $('asof').textContent = `ข้อมูลถึง ${data.last_date} · ${data.selected_name}`;
   renderToday(data.today_rain, data.selected_name);
   $('stat-rain30').textContent = fmt(data.kpis.rain_last_30_mm);
@@ -92,6 +119,7 @@ function render(data) {
   $('annual-chart').innerHTML = barChart(data.annual, 'rainfall_mm', (r) => String(r.year + 543), 'complete');
   $('climate-chart').innerHTML = barChart(data.forecast.climatology, 'rainfall_mm', (r) => months[r.month - 1]);
   renderRanking(data.ranking);
+  renderAnalysis(data);
   renderForecast(data);
   renderFiles(data.files);
   renderRunHistory(data.runs);
@@ -127,5 +155,6 @@ async function load() {
 
 document.querySelectorAll('.nav-item').forEach((item) => item.addEventListener('click', () => setView(item.dataset.view)));
 $('province').addEventListener('change', load);
+$('analysis-province').addEventListener('change', () => { $('province').value = $('analysis-province').value; load(); });
 $('refresh').addEventListener('click', load);
 load();

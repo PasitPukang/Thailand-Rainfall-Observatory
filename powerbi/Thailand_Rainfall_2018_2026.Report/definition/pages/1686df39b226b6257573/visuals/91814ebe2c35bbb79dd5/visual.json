@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "fd314105e6033b0ab04c",
+  "name": "91814ebe2c35bbb79dd5",
   "position": {
-    "x": 40,
-    "y": 160,
+    "x": 588,
+    "y": 180,
     "z": 0,
-    "height": 150,
-    "width": 280,
-    "tabOrder": 160
+    "height": 130,
+    "width": 258,
+    "tabOrder": 180
   },
   "visual": {
     "visualType": "cardVisual",
@@ -23,11 +23,11 @@
                       "Entity": "dim_province"
                     }
                   },
-                  "Property": "Heavy Days per point"
+                  "Property": "Rainfall per point (mm)"
                 }
               },
-              "queryRef": "dim_province.Heavy Days per point",
-              "nativeQueryRef": "Heavy Days per point"
+              "queryRef": "dim_province.Rainfall per point (mm)",
+              "nativeQueryRef": "Rainfall per point (mm)"
             }
           ]
         }
@@ -42,7 +42,7 @@
                     "Entity": "dim_province"
                   }
                 },
-                "Property": "Heavy Days per point"
+                "Property": "Rainfall per point (mm)"
               }
             },
             "direction": "Descending"
@@ -66,7 +66,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'วันฝนหนัก · เฉลี่ยต่อจุด'"
+                  "Value": "'ฝนสะสมต่อจุด (มม.)'"
                 }
               }
             },
@@ -111,7 +111,7 @@
                 "Entity": "dim_province"
               }
             },
-            "Property": "Heavy Days per point"
+            "Property": "Rainfall per point (mm)"
           }
         },
         "type": "Advanced"
