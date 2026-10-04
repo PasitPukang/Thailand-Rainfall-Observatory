@@ -34,7 +34,10 @@ function barChart(rows, key, label, partialKey, unit = 'มม.') {
   const slot = inner / rows.length, width = Math.min(34, slot * .62);
   const y = (v) => h - bottom - (v / max) * (h - top - bottom);
   const ticks = [0, .5, 1].map((part) => `<line class="gridline" x1="${left}" y1="${y(max * part)}" x2="${w - right}" y2="${y(max * part)}"/><text class="axis" x="${left - 6}" y="${y(max * part) + 4}" text-anchor="end">${fmt(max * part)}</text>`).join('');
-  const bars = rows.map((r, i) => { const cx = left + slot * (i + .5), value = Number(r[key]), barHeight = h - bottom - y(value); return `<rect class="bar ${partialKey && !r[partialKey] ? 'partial' : ''}" x="${cx - width / 2}" y="${y(value)}" width="${width}" height="${Math.max(1, barHeight)}" rx="3"><title>${esc(label(r))}: ${fmt(value)} ${esc(unit)}</title></rect><text class="axis" x="${cx}" y="${h - 8}" text-anchor="middle">${esc(label(r))}</text>`; }).join('');
+  // Thin out x-axis labels when bars are too narrow for them (e.g. 27 years); the latest bar always keeps its label.
+  const labelWidth = Math.max(...rows.map((r) => String(label(r)).length)) * 6.5 + 6;
+  const step = Math.max(1, Math.ceil(labelWidth / slot));
+  const bars = rows.map((r, i) => { const cx = left + slot * (i + .5), value = Number(r[key]), barHeight = h - bottom - y(value); const tick = (rows.length - 1 - i) % step === 0 ? `<text class="axis" x="${cx}" y="${h - 8}" text-anchor="middle">${esc(label(r))}</text>` : ''; return `<rect class="bar ${partialKey && !r[partialKey] ? 'partial' : ''}" x="${cx - width / 2}" y="${y(value)}" width="${width}" height="${Math.max(1, barHeight)}" rx="3"><title>${esc(label(r))}: ${fmt(value)} ${esc(unit)}</title></rect>${tick}`; }).join('');
   return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="กราฟแท่งปริมาณฝน">${ticks}${bars}</svg>`;
 }
 
