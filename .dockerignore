@@ -1,0 +1,12 @@
+data/raw/
+data/*.sqlite
+data/cleaned/
+database/export/
+powerbi/export/
+powerbi/*.pbix
+powerbi/*.pbip
+powerbi/*.Report/
+powerbi/*.SemanticModel/
+.git/
+**/__pycache__/
+*.pyc

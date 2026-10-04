@@ -1,0 +1,4 @@
+data/weather.sqlite filter=lfs diff=lfs merge=lfs -text
+database/export/*.csv filter=lfs diff=lfs merge=lfs -text
+powerbi/export/mart_weather_daily.csv filter=lfs diff=lfs merge=lfs -text
+powerbi/*.pbix filter=lfs diff=lfs merge=lfs -text

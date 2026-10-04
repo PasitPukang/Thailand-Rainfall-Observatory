@@ -1,0 +1,23 @@
+Rainfall (mm) = SUM(mart_weather_daily[rainfall_mm])
+
+Heavy rain days =
+CALCULATE(
+    COUNTROWS(mart_weather_daily),
+    mart_weather_daily[rain_class] IN {"heavy", "very_heavy"}
+)
+
+Very heavy rain days =
+CALCULATE(
+    COUNTROWS(mart_weather_daily),
+    mart_weather_daily[rain_class] = "very_heavy"
+)
+
+Average temperature (C) = AVERAGE(mart_weather_daily[average_temperature_c])
+
+Maximum daily rain (mm) = MAX(mart_weather_daily[rainfall_mm])
+
+Average annual heavy rain days =
+AVERAGEX(
+    VALUES('Date'[Year]),
+    [Heavy rain days]
+)

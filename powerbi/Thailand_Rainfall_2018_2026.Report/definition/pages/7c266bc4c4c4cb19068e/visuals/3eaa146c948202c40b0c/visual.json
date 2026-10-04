@@ -1,0 +1,154 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "3eaa146c948202c40b0c",
+  "position": {
+    "x": 720,
+    "y": 350,
+    "z": 3,
+    "height": 365,
+    "width": 680,
+    "tabOrder": 350
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_province"
+                    }
+                  },
+                  "Property": "province_name"
+                }
+              },
+              "queryRef": "dim_province.province_name",
+              "nativeQueryRef": "province_name",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_province"
+                    }
+                  },
+                  "Property": "Heavy Rain Days"
+                }
+              },
+              "queryRef": "dim_province.Heavy Rain Days",
+              "nativeQueryRef": "Heavy Rain Days"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dim_province"
+                  }
+                },
+                "Property": "Heavy Rain Days"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'เปรียบเทียบวันฝนหนักรายจังหวัด'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#17324A'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "6360a188490506a0d269",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_province"
+              }
+            },
+            "Property": "province_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "7bdd2254d8846654c41a",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_province"
+              }
+            },
+            "Property": "Heavy Rain Days"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

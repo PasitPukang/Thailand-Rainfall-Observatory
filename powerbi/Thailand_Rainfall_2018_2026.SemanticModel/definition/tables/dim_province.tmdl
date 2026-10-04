@@ -1,0 +1,64 @@
+table dim_province
+	lineageTag: 65cdda8b-9909-4399-95f7-d41f856b418b
+
+	measure 'Total Rainfall (mm)' = SUM('mart_weather_daily'[rainfall_mm])
+		lineageTag: d647f7ac-3fe7-43b4-9bce-b49739e5f372
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Heavy Rain Days' = CALCULATE(COUNTROWS('mart_weather_daily'), 'mart_weather_daily'[rainfall_mm] >= 35.1)
+		formatString: 0
+		lineageTag: 615f6339-0415-4327-afe9-039301851ec5
+
+	measure 'Very Heavy Rain Days' = CALCULATE(COUNTROWS('mart_weather_daily'), 'mart_weather_daily'[rainfall_mm] >= 90.1)
+		formatString: 0
+		lineageTag: fbe30962-d86d-4aae-ab6e-deb6106a15fb
+
+	column province_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 57c92852-f4ef-4250-8724-6d8c1334553b
+		summarizeBy: none
+		sourceColumn: province_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column province_name
+		dataType: string
+		lineageTag: 35ed8178-7d7b-46d8-bc98-16557aeb7272
+		summarizeBy: none
+		sourceColumn: province_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column latitude
+		dataType: double
+		lineageTag: 9962dd2b-7b53-42c6-9490-0b04725c2d5b
+		summarizeBy: none
+		sourceColumn: latitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column longitude
+		dataType: double
+		lineageTag: 176734da-9f65-430a-9d67-ae8e1c855cff
+		summarizeBy: none
+		sourceColumn: longitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dim_province = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("powerbi/export/dim_province.csv"),[Delimiter=",", Columns=4, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"province_id", Int64.Type}, {"province_name", type text}, {"latitude", type number}, {"longitude", type number}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table

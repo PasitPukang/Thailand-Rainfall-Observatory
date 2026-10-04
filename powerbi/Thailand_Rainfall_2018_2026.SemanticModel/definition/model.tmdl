@@ -1,0 +1,21 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["dim_province","mart_weather_daily"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table dim_province
+ref table mart_weather_daily
+ref table DateTableTemplate_35222667-5ab5-458b-94eb-c00f52cd9095
+ref table LocalDateTable_1cc40472-bca4-40b8-8e43-c72f6fad312f
+
+ref cultureInfo en-US

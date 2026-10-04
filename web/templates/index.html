@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="แดชบอร์ดฝนและสภาพอากาศรายจังหวัดของประเทศไทย พร้อมคู่มือ Data Pipeline">
+  <title>Thailand Rainfall Observatory</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a2032'/%3E%3Cpath d='M32 10C23 24 16 31 16 42a16 16 0 0 0 32 0C48 31 41 24 32 10Z' fill='%232dd4bf'/%3E%3Cpath d='M25 43c0 5 3 8 8 8' fill='none' stroke='%23e8fbff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/responsive.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">◉</span><div><strong>RAIN / TH</strong><small>Thailand Rainfall Observatory</small></div></div>
+      <nav class="side-nav" aria-label="เมนูหลัก">
+        <button class="nav-item active" data-view="dashboard"><span>◫</span> ภาพรวมข้อมูล</button>
+        <button class="nav-item" data-view="forecast"><span>◷</span> แนวโน้มและประมาณการ</button>
+        <button class="nav-item" data-view="pipeline"><span>⌁</span> การทำงานของ Pipeline</button>
+        <button class="nav-item" data-view="manual"><span>▤</span> คู่มือและแหล่งข้อมูล</button>
+      </nav>
+      <div class="sidebar-bottom"><span class="live-dot"></span><div>อ่านจาก PostgreSQL ในเครื่อง<small>รีเฟรชหน้าเพื่อดูข้อมูลล่าสุด</small></div></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="breadcrumb">โครงการวิเคราะห์ฝนรายจังหวัด <span>/</span> <strong id="view-title">ภาพรวมข้อมูล</strong></div>
+        <div class="topbar-right"><span id="asof" class="asof">กำลังโหลดข้อมูล…</span><button id="refresh" class="icon-button" aria-label="โหลดข้อมูลใหม่" title="โหลดข้อมูลใหม่">↻</button></div>
+      </header>
+
+      <div id="error" class="error-banner hidden" role="alert"></div>
+
+      <section id="dashboard" class="view active">
+        <div class="page-head"><div><p class="eyebrow">WEATHER INTELLIGENCE / THAILAND</p><h1>ฝนและสภาพอากาศ<br><em>รายจังหวัด</em></h1><p class="lead">ข้อมูลแบบจำลอง ERA5 ณ จุดตัวแทน 77 จังหวัด ตั้งแต่ปี 2018</p></div><div class="control-card"><label for="province">พื้นที่วิเคราะห์</label><select id="province"><option value="">เฉลี่ย 77 จุดตัวแทน</option></select><small>เลือกจังหวัดเพื่อดูค่าที่จุดตัวแทนของจังหวัดนั้น</small></div></div>
+        <article class="today-card" aria-live="polite">
+          <div class="today-copy"><p class="eyebrow">TODAY / RAIN OUTLOOK</p><h2>วันนี้ฝนจะตกไหม?</h2><p id="today-place" class="today-place">กำลังคำนวณจากข้อมูลย้อนหลัง…</p><p id="today-explanation" class="today-explanation"></p></div>
+          <div class="today-result"><span id="today-date" class="today-date">—</span><strong id="today-answer">—</strong><div class="today-probability"><span id="today-probability">—</span><small>โอกาสจากสถิติย้อนหลัง</small></div><div class="today-meter"><span id="today-meter-fill"></span></div></div>
+        </article>
+        <p class="today-caveat">ประมาณจากความถี่วันที่มีฝน ≥ 0.1 มม. ในช่วง ±15 วันของวันที่เดียวกัน ปี 2018–2025 · เป็นแนวโน้มตามฤดูกาล ไม่ใช่พยากรณ์อากาศสด</p>
+        <div class="stat-grid">
+          <article class="stat-card"><span>ฝนสะสม 30 วันล่าสุด</span><strong id="stat-rain30">—</strong><small>มม. ต่อจุดตัวแทน</small></article>
+          <article class="stat-card"><span>ฝนสะสมปีปัจจุบัน</span><strong id="stat-ytd">—</strong><small>มม. ตั้งแต่ 1 ม.ค.</small></article>
+          <article class="stat-card"><span>ฝนสูงสุดในหนึ่งวัน · 30 วัน</span><strong id="stat-max">—</strong><small>มม. ต่อวัน</small></article>
+          <article class="stat-card"><span>อุณหภูมิเฉลี่ย · 30 วัน</span><strong id="stat-temp">—</strong><small>°C</small></article>
+        </div>
+        <div class="chart-grid">
+          <article class="panel wide"><div class="panel-head"><div><p class="eyebrow">RECENT WEATHER</p><h2>ปริมาณฝนรายวัน · 30 วันล่าสุด</h2></div><span class="unit">มม. / วัน</span></div><div id="recent-chart" class="chart" aria-label="กราฟปริมาณฝนรายวัน"></div></article>
+          <article class="panel"><div class="panel-head"><div><p class="eyebrow">LONG TERM</p><h2>ฝนสะสมรายปี</h2></div><span class="unit">มม. / ปี</span></div><div id="annual-chart" class="chart" aria-label="กราฟฝนสะสมรายปี"></div><p class="panel-note">ปีล่าสุดยังไม่ครบทั้งปี</p></article>
+        </div>
+        <div class="chart-grid lower">
+          <article class="panel"><div class="panel-head"><div><p class="eyebrow">SEASONAL PATTERN</p><h2>ค่ากลางฝนรายเดือน</h2></div><span class="unit">2018–2025</span></div><div id="climate-chart" class="chart" aria-label="กราฟค่ากลางฝนรายเดือน"></div></article>
+          <article class="panel"><div class="panel-head"><div><p class="eyebrow">PROVINCE COMPARISON</p><h2>จังหวัดที่พบวันฝนหนักบ่อย</h2></div><span class="unit">สะสมทุกปี</span></div><div id="ranking" class="ranking"></div><p class="panel-note">นับวันที่ฝน ≥ 35.1 มม. ณ จุดตัวแทนของจังหวัด</p></article>
+        </div>
+      </section>
+
+      <section id="forecast" class="view">
+        <div class="section-intro"><p class="eyebrow">SEASONAL ESTIMATE</p><h1>แนวโน้มและ<br><em>ประมาณการฝน</em></h1><p class="lead">ประมาณปริมาณฝนรวมรายเดือนจากค่ากลางของเดือนเดียวกันในปี 2018–2025</p></div>
+        <div class="callout"><strong>วิธีอ่านค่า</strong><p>ผล “วันนี้ฝนจะตกไหม” อยู่ในหน้าภาพรวมและคำนวณจากความถี่วันที่มีฝนย้อนหลัง ส่วนค่าด้านล่างเป็นค่าประมาณปริมาณฝนรายเดือนตามฤดูกาล ไม่ใช่พยากรณ์อากาศสด ช่วงต่ำ–สูงแสดงเปอร์เซ็นไทล์ 10–90 ของ 8 ปีย้อนหลัง ค่าคลาดเคลื่อนเป็นผลทดสอบย้อนหลังแบบเว้นทีละปี</p></div>
+        <div id="forecast-cards" class="forecast-grid"></div>
+        <article class="panel forecast-method"><p class="eyebrow">METHOD</p><h2>คำนวณอย่างไร</h2><ol><li>รวมฝนรายวันเป็นยอดรายเดือนของแต่ละปี</li><li>เลือกเดือนปฏิทินเดียวกับเดือนที่จะประมาณ และใช้เฉพาะปีที่มีข้อมูลครบเดือน</li><li>ใช้ค่ามัธยฐานเป็นค่าประมาณ และเปอร์เซ็นไทล์ 10–90 เป็นช่วงอ้างอิง</li><li>คำนวณ MAE โดยทำนายแต่ละปีจากปีอื่นอีก 7 ปี แล้ววัดความคลาดเคลื่อน</li></ol><p class="panel-note">พิกัดหนึ่งจุดไม่แทนค่าเฉลี่ยทั้งจังหวัด และแบบจำลองย้อนหลัง ERA5 ไม่ใช่ข้อมูลตรวจวัดสถานีโดยตรง</p></article>
+      </section>
+
+      <section id="pipeline" class="view">
+        <div class="section-intro"><p class="eyebrow">DATA OPERATIONS</p><h1>การทำงานของ<br><em>Data Pipeline</em></h1><p class="lead">ดึงข้อมูล ตรวจคุณภาพ บันทึก และส่งต่อเพื่อวิเคราะห์โดยอัตโนมัติ</p></div>
+        <div class="run-status panel"><div><p class="eyebrow">AIRFLOW RUN ล่าสุด</p><h2 id="run-status">กำลังโหลด…</h2><p id="run-date" class="muted"></p></div><div class="run-metrics"><div><strong id="run-new-hourly">—</strong><span>แถวรายชั่วโมงใหม่</span></div><div><strong id="run-updated">—</strong><span>แถวอัปเดต</span></div><div><strong id="run-new-daily">—</strong><span>แถวรายวันใหม่</span></div></div></div>
+        <div class="flow-list">
+          <div class="flow-step"><b>01</b><div><h3>Extract · ดึงข้อมูล</h3><p>Airflow ตรวจวันล่าสุดที่ครบ 77 จังหวัด แล้วเรียก Open-Meteo Historical API ถึงวันที่ย้อนหลัง 7 วัน บันทึกผลดิบเป็น JSON.gz แยกจังหวัดและวัน</p></div></div>
+          <div class="flow-step"><b>02</b><div><h3>Cleanse · ตรวจและทำความสะอาด</h3><p>ตรวจ 24 ชั่วโมงต่อวัน เวลาไม่ซ้ำ เขตเวลา Asia/Bangkok และช่วงค่าฝน อุณหภูมิ ความชื้น และลม แปลงตัวเลขก่อนส่งบันทึก</p></div></div>
+          <div class="flow-step"><b>03</b><div><h3>Load · บันทึก PostgreSQL</h3><p>เพิ่มหรืออัปเดตข้อมูลรายชั่วโมงด้วยคีย์จังหวัดและเวลา แล้วสรุปเป็นข้อมูลรายวัน บันทึกประวัติแต่ละชุดใน etl_batch</p></div></div>
+          <div class="flow-step"><b>04</b><div><h3>Validate &amp; Report · ตรวจผลและแจ้งสถานะ</h3><p>ตรวจจำนวนแถวและความครบถ้วน ส่งออก CSV สำหรับ Power BI และบันทึกสถานะรอบทำงานใน pipeline_run_audit</p></div></div>
+        </div>
+        <article class="panel run-history"><div class="panel-head"><div><p class="eyebrow">RUN HISTORY</p><h2>ประวัติ 10 รอบล่าสุด</h2></div></div><div class="history-scroll"><table><thead><tr><th>เวลาจบงาน (ไทย)</th><th>สถานะ</th><th>ข้อมูลถึง</th><th>รายชั่วโมงใหม่</th><th>อัปเดต</th><th>รายวันใหม่</th></tr></thead><tbody id="run-history"></tbody></table></div></article>
+        <div class="two-col"><article class="panel"><div class="panel-head"><div><p class="eyebrow">DATA STORE</p><h2>ตารางใน PostgreSQL</h2></div></div><div class="table-list"><div><code>fact_weather_hourly</code><span id="row-hourly">—</span></div><div><code>mart_weather_daily</code><span id="row-daily">—</span></div><div><code>dim_province</code><span id="row-provinces">—</span></div><div><code>etl_batch</code><span>ประวัติการโหลด</span></div><div><code>pipeline_run_audit</code><span>สถานะ Airflow</span></div></div></article><article class="panel"><div class="panel-head"><div><p class="eyebrow">FILES</p><h2>ไฟล์ข้อมูลที่มี</h2></div></div><div id="file-inventory" class="table-list"></div></article></div>
+      </section>
+
+      <section id="manual" class="view">
+        <div class="section-intro"><p class="eyebrow">OPERATING GUIDE</p><h1>คู่มือใช้งาน<br><em>และแหล่งข้อมูล</em></h1><p class="lead">เส้นทางจากแหล่งข้อมูลจนถึงรายงาน พร้อมตำแหน่งไฟล์และเครื่องมือที่ใช้</p></div>
+        <div class="manual-grid"><article class="panel"><p class="eyebrow">01 / START</p><h2>เปิดระบบ</h2><p>เปิด Docker Desktop แล้วเริ่มบริการจากโฟลเดอร์โครงการ:</p><pre>docker compose up -d --build</pre><p>เว็บนี้เปิดที่ <a href="http://localhost:8090">localhost:8090</a> และ Airflow เปิดที่ <a href="http://localhost:8088">localhost:8088</a></p></article><article class="panel"><p class="eyebrow">02 / AIRFLOW</p><h2>ตรวจงานประจำวัน</h2><p>เข้า Airflow ด้วยบัญชีในเครื่องที่ตั้งค่าไว้ เลือก DAG <code>thailand_weather_daily</code> แล้วดู Grid, Logs และ XCom ของ <code>notify_run_status</code> งานทำงานเวลา 14:00 น. ตามเวลาไทยเมื่อ Docker เปิดอยู่</p></article><article class="panel"><p class="eyebrow">03 / DATABASE</p><h2>ดูข้อมูลใน DBeaver</h2><p>ใช้การเชื่อมต่อ <code>Thailand Rainfall (weather)</code> ที่ตั้งค่าไว้แล้ว ไปที่ <code>weather → public → Tables</code> แล้วเปิดแท็บ Data ของตารางที่ต้องการ</p><p class="small-detail">Host 127.0.0.1 · Port 55432 · Database weather</p></article><article class="panel"><p class="eyebrow">04 / POWER BI</p><h2>เปิดรายงาน</h2><p>เปิดไฟล์ PBIX ด้านล่างใน Power BI Desktop เมื่อ Airflow ส่งออก CSV ใหม่ ให้กด Refresh ใน Power BI เพื่อโหลดข้อมูลล่าสุด</p><a class="download" href="/download/powerbi">ดาวน์โหลดรายงาน Power BI</a></article></div>
+        <div class="two-col"><article class="panel"><div class="panel-head"><div><p class="eyebrow">PROJECT FILES</p><h2>ไฟล์หลักของโครงการ</h2></div></div><div class="resource-list"><a href="/download/daily_csv"><strong>mart_weather_daily.csv</strong><span>ข้อมูลรายวันสำหรับ Power BI</span></a><a href="/download/provinces_csv"><strong>dim_province.csv</strong><span>ชื่อและพิกัด 77 จังหวัด</span></a><a href="/download/web_guide"><strong>คู่มือเว็บฉบับเต็ม</strong><span>วิธีเปิดระบบ ขั้นตอนข้อมูล ไฟล์ และวิธีประมาณการ</span></a><a href="/download/project_guide"><strong>README.md</strong><span>วิธีเริ่มระบบและโครงสร้างโครงการ</span></a><a href="/download/design"><strong>DESIGN.md</strong><span>รายละเอียด Data Pipeline และเกณฑ์คุณภาพ</span></a><a href="/download/database_guide"><strong>คู่มือฐานข้อมูล</strong><span>ตารางและตัวอย่าง SQL สำหรับ DBeaver</span></a><a href="/download/powerbi_guide"><strong>คู่มือ Power BI</strong><span>วิธีเปิดและรีเฟรชรายงาน</span></a></div></article><article class="panel"><div class="panel-head"><div><p class="eyebrow">OFFICIAL & SOURCE LINKS</p><h2>เว็บที่ใช้ในโครงการ</h2></div></div><div class="resource-list external"><a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank" rel="noopener noreferrer"><strong>Open-Meteo Historical Weather API</strong><span>ข้อมูลสภาพอากาศย้อนหลัง ERA5</span></a><a href="https://github.com/dataengineercafe/thailand-province-latitude-longitude" target="_blank" rel="noopener noreferrer"><strong>ชุดพิกัดจังหวัดไทย</strong><span>พิกัดจุดตัวแทน 77 จังหวัด</span></a><a href="https://www.tmd.go.th/info/%E0%B9%80%E0%B8%81%E0%B8%93%E0%B8%91%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8" target="_blank" rel="noopener noreferrer"><strong>กรมอุตุนิยมวิทยา</strong><span>เกณฑ์แบ่งระดับฝน</span></a><a href="https://airflow.apache.org/docs/" target="_blank" rel="noopener noreferrer"><strong>Apache Airflow</strong><span>ระบบจัดตารางและติดตามงาน</span></a><a href="https://www.postgresql.org/docs/" target="_blank" rel="noopener noreferrer"><strong>PostgreSQL</strong><span>ฐานข้อมูลหลัก</span></a><a href="https://dbeaver.io/" target="_blank" rel="noopener noreferrer"><strong>DBeaver</strong><span>โปรแกรมเปิดดูฐานข้อมูล</span></a><a href="https://www.microsoft.com/en-us/power-platform/products/power-bi/desktop" target="_blank" rel="noopener noreferrer"><strong>Power BI Desktop</strong><span>รายงานและ Data Visualization</span></a></div></article></div>
+        <div class="callout bottom-note"><strong>ข้อจำกัดของข้อมูล</strong><p>ERA5 เป็นข้อมูลย้อนหลังจากแบบจำลอง ณ พิกัดตัวแทนหนึ่งจุดต่อจังหวัด ค่าที่แสดงและประมาณการไม่ใช่ค่าเฉลี่ยพื้นที่ทั้งจังหวัดหรือคำเตือนภัยฝน/น้ำท่วม</p></div>
+      </section>
+    </main>
+  </div>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

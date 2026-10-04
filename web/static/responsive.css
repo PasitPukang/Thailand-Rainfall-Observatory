@@ -1,0 +1,28 @@
+@media (max-width: 1100px) {
+  .forecast-grid { grid-template-columns: 1fr; }
+}
+
+.run-history { margin-top: 18px; }
+.history-scroll { overflow-x: auto; }
+.run-history table { width: 100%; border-collapse: collapse; min-width: 640px; font-size: 12px; }
+.run-history th, .run-history td { border-top: 1px solid var(--line); padding: 11px 8px; text-align: right; white-space: nowrap; }
+.run-history th:first-child, .run-history td:first-child { text-align: left; }
+.run-history th { color: var(--muted); font-weight: 600; }
+.run-history .ok { color: var(--teal); }
+.run-history .fail { color: var(--danger); }
+
+.today-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(245px, .5fr); gap: 28px; align-items: center; padding: 26px 30px; border: 1px solid #3d897f; border-radius: 18px; background: radial-gradient(circle at 88% 20%, #1e5860 0, transparent 42%), linear-gradient(135deg, #123447, #0e2938); box-shadow: 0 14px 36px #06131d45; }
+.today-copy h2 { font-size: clamp(1.6rem, 2.7vw, 2.5rem); line-height: 1.25; margin: 0 0 8px; }
+.today-place { color: var(--text); font-size: 15px; margin: 0 0 8px; }
+.today-explanation { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 0; }
+.today-result { text-align: right; }
+.today-date { display: block; color: #b4d2d8; font-size: 12px; }
+.today-result > strong { display: block; font-size: clamp(1.5rem, 2.5vw, 2.2rem); margin: 6px 0; color: var(--gold); }
+.today-result > strong.rain-yes { color: var(--teal); }
+.today-probability { display: flex; justify-content: flex-end; align-items: baseline; gap: 9px; }
+.today-probability span { color: var(--text); font: 700 2.2rem 'Segoe UI', sans-serif; }
+.today-probability small { color: var(--muted); font-size: 11px; }
+.today-meter { height: 7px; background: #244656; border-radius: 99px; overflow: hidden; margin-top: 10px; }
+.today-meter span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #498fce, #41d5c3); border-radius: inherit; transition: width .35s ease; }
+.today-caveat { margin: 9px 3px 19px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+@media (max-width: 760px) { .today-card { grid-template-columns: 1fr; gap: 16px; padding: 20px; } .today-result { text-align: left; } .today-probability { justify-content: flex-start; } }

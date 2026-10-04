@@ -1,0 +1,20 @@
+# Local settings, caches, and credentials
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+*.log
+*.tmp
+Thumbs.db
+.DS_Store
+
+# Database sidecars and Power BI Desktop local caches
+data/*.sqlite-journal
+data/*.sqlite-wal
+data/*.sqlite-shm
+powerbi/**/.pbi/
+powerbi/Thailand_Rainfall_2018_2025.pbix

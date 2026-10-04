@@ -1,0 +1,1 @@
+"""Thailand provincial weather ETL."""

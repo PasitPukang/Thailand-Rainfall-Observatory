@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Thailand_Rainfall_2018_2026"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "60e7f18c-862f-4716-b3cd-8ade4e8a3b19"
+  }
+}

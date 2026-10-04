@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "7c266bc4c4c4cb19068e",
+  "displayName": "ภาพรวมฝนไทย",
+  "displayOption": "FitToPage",
+  "height": 810,
+  "width": 1440
+}

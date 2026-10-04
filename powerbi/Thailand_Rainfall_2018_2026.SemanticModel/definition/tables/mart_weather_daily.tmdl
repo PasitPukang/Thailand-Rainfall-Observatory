@@ -1,0 +1,106 @@
+table mart_weather_daily
+	lineageTag: 98cb6185-7d32-4889-b2b3-f84582e10ca7
+
+	column province_id
+		dataType: int64
+		formatString: 0
+		lineageTag: e8a36321-0580-469b-adef-fb6e0dded48f
+		summarizeBy: none
+		sourceColumn: province_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column weather_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: da93bcae-08b6-4605-bf6f-e0b6c495bc98
+		summarizeBy: none
+		sourceColumn: weather_date
+
+		variation Variation
+			isDefault
+			relationship: 05986082-894f-41bd-b586-443ca97acd31
+			defaultHierarchy: LocalDateTable_1cc40472-bca4-40b8-8e43-c72f6fad312f.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column rainfall_mm
+		dataType: double
+		lineageTag: 0ade4c25-c756-404b-8d68-951b0233a7cc
+		summarizeBy: sum
+		sourceColumn: rainfall_mm
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column average_temperature_c
+		dataType: double
+		lineageTag: 41ff6197-7274-446c-83ed-beaf17b94708
+		summarizeBy: sum
+		sourceColumn: average_temperature_c
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column maximum_temperature_c
+		dataType: double
+		lineageTag: b588b216-ac35-4e45-a769-16daf8b97de0
+		summarizeBy: sum
+		sourceColumn: maximum_temperature_c
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column average_humidity_pct
+		dataType: double
+		lineageTag: c8966c78-a8ab-4b20-bf79-c6d5e07e74d3
+		summarizeBy: sum
+		sourceColumn: average_humidity_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column maximum_wind_kmh
+		dataType: double
+		lineageTag: ebe0b692-82d8-4797-a59c-5a18d22bf370
+		summarizeBy: sum
+		sourceColumn: maximum_wind_kmh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column observed_hours
+		dataType: int64
+		formatString: 0
+		lineageTag: 6e19e5d0-4b52-4ec7-a0a7-5cb2be17ecbb
+		summarizeBy: sum
+		sourceColumn: observed_hours
+
+		annotation SummarizationSetBy = Automatic
+
+	column rain_class
+		dataType: string
+		lineageTag: a525e59c-63a1-4378-b8e1-a76c59a20c28
+		summarizeBy: none
+		sourceColumn: rain_class
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_weather_daily = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("powerbi/export/mart_weather_daily.csv"),[Delimiter=",", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"province_id", Int64.Type}, {"weather_date", type date}, {"rainfall_mm", type number}, {"average_temperature_c", type number}, {"maximum_temperature_c", type number}, {"average_humidity_pct", type number}, {"maximum_wind_kmh", type number}, {"observed_hours", Int64.Type}, {"rain_class", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table

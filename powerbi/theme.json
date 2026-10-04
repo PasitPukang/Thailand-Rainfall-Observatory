@@ -1,0 +1,7 @@
+{
+  "name": "Thailand Rainfall",
+  "dataColors": ["#107DA1", "#F29E4C", "#4D9E8F", "#7C6EB0", "#D46762", "#66A9CE"],
+  "background": "#F7FAFC",
+  "foreground": "#17324A",
+  "tableAccent": "#107DA1"
+}

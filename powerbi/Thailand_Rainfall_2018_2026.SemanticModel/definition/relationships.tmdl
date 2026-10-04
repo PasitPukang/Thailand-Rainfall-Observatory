@@ -1,0 +1,8 @@
+relationship 05986082-894f-41bd-b586-443ca97acd31
+	joinOnDateBehavior: datePartOnly
+	fromColumn: mart_weather_daily.weather_date
+	toColumn: LocalDateTable_1cc40472-bca4-40b8-8e43-c72f6fad312f.Date
+
+relationship AutoDetected_d6e49bbf-30b0-463c-9903-49293f80e4b6
+	fromColumn: mart_weather_daily.province_id
+	toColumn: dim_province.province_id
