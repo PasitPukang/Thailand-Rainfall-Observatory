@@ -36,7 +36,7 @@ docker compose up -d --build
 docker compose exec airflow-scheduler airflow dags trigger thailand_weather_daily
 ```
 
-DAG ทำงานเองทุกวันเวลา **14:00 น. ตามเวลาไทย** เมื่อ Docker เปิดอยู่ โดยดึงข้อมูลย้อนหลังได้ถึงวันปัจจุบันลบ 7 วัน หลัง Airflow ส่งออก CSV ใหม่ ให้กด **Home → Refresh** ใน Power BI Desktop เว็บอ่าน PostgreSQL โดยตรงและรีเฟรชได้จากปุ่มบนหน้าเว็บ
+DAG ทำงานเองทุกวันเวลา **14:00 น. ตามเวลาไทย** เมื่อ Docker เปิดอยู่ โดยเติมข้อมูลถึงเมื่อวาน วันที่ ERA5 ยังไม่ออก (ช้าราว 5–6 วัน) จะใช้ข้อมูลชั่วคราว `best_match` ของ Open-Meteo ก่อน แล้วแทนที่ด้วย ERA5 อัตโนมัติในรอบถัดไป หลัง Airflow ส่งออก CSV ใหม่ ให้กด **Home → Refresh** ใน Power BI Desktop เว็บอ่าน PostgreSQL โดยตรงและรีเฟรชได้จากปุ่มบนหน้าเว็บ
 
 > เมื่อ clone ไปเครื่องอื่น ไฟล์ PBIX เปิดดูข้อมูลที่ฝังไว้ได้ทันที แต่ก่อนกด Refresh ต้องเปลี่ยน **Data source settings** ให้ชี้ไปที่ `powerbi/export/*.csv` ในเครื่องใหม่ ตาม [คู่มือ Power BI](powerbi/README.md)
 

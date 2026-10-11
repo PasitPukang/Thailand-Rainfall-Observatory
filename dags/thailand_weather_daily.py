@@ -100,6 +100,8 @@ def thailand_weather_daily():
             "new_hourly_rows": loading.get("new_hourly_rows", 0),
             "updated_hourly_rows": loading.get("updated_hourly_rows", 0),
             "new_daily_rows": loading.get("new_daily_rows", 0),
+            "era5_through": extraction.get("era5_through"),
+            "provisional_rows": cleansing.get("provisional_rows", 0),
             "validated_hourly_rows": validation.get("validated_hourly_rows", 0),
             "powerbi_files": len(exported),
             "failed_tasks": failed,
@@ -107,8 +109,10 @@ def thailand_weather_daily():
         message = (f"Status={status}; new hourly={summary['new_hourly_rows']:,}; "
                    f"updated hourly={summary['updated_hourly_rows']:,}; "
                    f"new daily={summary['new_daily_rows']:,}; "
+                   f"ERA5 through={summary['era5_through'] or '-'}; "
+                   f"provisional hourly={summary['provisional_rows']:,}; "
                    f"failed tasks={','.join(failed) or '-'}")
-        target = date.fromisoformat(plan["target"]) if plan else datetime.now(ZoneInfo("Asia/Bangkok")).date() - timedelta(days=7)
+        target = date.fromisoformat(plan["target"]) if plan else datetime.now(ZoneInfo("Asia/Bangkok")).date() - timedelta(days=1)
         log = logging.getLogger(__name__)
         (log.info if status == "SUCCESS" else log.error)("AIRFLOW WEATHER NOTIFICATION: %s | %s", message, summary)
         save_run_status(

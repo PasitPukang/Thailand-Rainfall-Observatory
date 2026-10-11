@@ -112,7 +112,8 @@ function render(data) {
     });
   }
   $('analysis-province').value = $('province').value;
-  $('asof').textContent = `ข้อมูลถึง ${data.last_date} · ${data.selected_name}`;
+  const provisional = data.provisional_from ? ` (ตั้งแต่ ${data.provisional_from} เป็นข้อมูลชั่วคราว รอแทนที่ด้วย ERA5)` : '';
+  $('asof').textContent = `ข้อมูลถึง ${data.last_date}${provisional} · ${data.selected_name}`;
   renderToday(data.today_rain, data.selected_name);
   $('stat-rain30').textContent = fmt(data.kpis.rain_last_30_mm);
   $('stat-ytd').textContent = fmt(data.kpis.rain_ytd_mm);

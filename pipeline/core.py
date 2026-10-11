@@ -24,6 +24,8 @@ DB_URL = os.getenv("DATABASE_URL", f"sqlite:///{(ROOT / 'data' / 'weather.sqlite
 API_URL = "https://archive-api.open-meteo.com/v1/archive"
 VARIABLES = ("precipitation", "temperature_2m", "relative_humidity_2m", "wind_speed_10m")
 MODEL = "era5"
+# Open-Meteo blends recent analyses and forecasts here; used only until ERA5 covers the day.
+PROVISIONAL_MODEL = "best_match"
 
 metadata = MetaData()
 province = Table(
@@ -125,11 +127,11 @@ def date_windows(start: date, end: date):
         current = last + timedelta(days=1)
 
 
-def fetch(prov: dict, start: date, end: date) -> dict:
+def fetch(prov: dict, start: date, end: date, model: str = MODEL) -> dict:
     params = {
         "latitude": prov["latitude"], "longitude": prov["longitude"],
         "start_date": start.isoformat(), "end_date": end.isoformat(),
-        "hourly": ",".join(VARIABLES), "models": MODEL,
+        "hourly": ",".join(VARIABLES), "models": model,
         "timezone": "Asia/Bangkok",
     }
     transient_failures = 0
@@ -169,7 +171,7 @@ def save_raw(payload: dict, province_id: int, start: date, end: date) -> Path:
     return target
 
 
-def _rows(payload: dict, province_id: int, start: date, end: date) -> list[dict]:
+def _rows(payload: dict, province_id: int, start: date, end: date, model: str = MODEL) -> list[dict]:
     data = payload.get("hourly", {})
     times = data.get("time", [])
     if not times:
@@ -196,7 +198,7 @@ def _rows(payload: dict, province_id: int, start: date, end: date) -> list[dict]
             "temperature_c": data["temperature_2m"][i],
             "relative_humidity_pct": data["relative_humidity_2m"][i],
             "wind_speed_kmh": data["wind_speed_10m"][i],
-            "source_model": MODEL,
+            "source_model": model,
         })
     if len({r["weather_time"] for r in result}) != expected:
         raise ValueError("Duplicate hourly timestamps")

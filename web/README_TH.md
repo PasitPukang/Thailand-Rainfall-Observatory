@@ -29,7 +29,7 @@
 ## ลำดับการทำข้อมูล
 
 1. Open-Meteo Historical Weather API ส่งข้อมูล ERA5 รายชั่วโมง ณ พิกัดตัวแทน 77 จังหวัด
-2. Airflow DAG `thailand_weather_daily` ทำงานทุกวันเวลา 14:00 น. ตามเวลาไทย และโหลดถึงวันย้อนหลัง 7 วัน
+2. Airflow DAG `thailand_weather_daily` ทำงานทุกวันเวลา 14:00 น. ตามเวลาไทย และโหลดถึงเมื่อวาน วันที่ ERA5 ยังไม่ออกเป็นข้อมูลชั่วคราวจนกว่า ERA5 จะมาแทน
 3. `extract_raw` บันทึก JSON.gz ใน `data/raw/province_XX/`
 4. `cleanse_data` ตรวจจำนวนชั่วโมง เวลาซ้ำ เขตเวลา และช่วงค่าฝน/อุณหภูมิ/ความชื้น/ลม แล้วบันทึกไฟล์ที่ผ่านการตรวจใน `data/cleaned/province_XX/`
 5. `load_postgres` บันทึกรายชั่วโมงใน `fact_weather_hourly` และสรุปรายวันใน `mart_weather_daily` แบบ upsert เพื่อไม่ให้แถวซ้ำ
@@ -86,4 +86,4 @@
 1. ตรวจว่า Docker Desktop เปิดและ `docker compose ps` แสดงบริการ `postgres`, `airflow-scheduler`, `airflow-webserver`, `dashboard` ทำงาน
 2. เปิด Airflow ที่ `http://localhost:8088` แล้วดูสถานะ DAG `thailand_weather_daily` ใน Grid หากล้มเหลวให้เปิด Logs ของงานสีแดง
 3. หาก Airflow เพิ่งบันทึกเสร็จ ให้กดปุ่มรีเฟรชในเว็บนี้ สำหรับ Power BI Desktop ต้องกด Refresh ในโปรแกรมแยกต่างหาก
-4. ข้อมูล ERA5 มีช่วงหน่วง เว็บจึงอาจมีวันล่าสุดย้อนหลังราว 7 วันตามการตั้งค่า Pipeline
+4. ข้อมูล ERA5 หน่วงราว 5–6 วัน ช่วงวันล่าสุดจึงเป็นข้อมูลชั่วคราว `best_match` เว็บแสดงวันที่เริ่มข้อมูลชั่วคราวไว้ข้างวันที่ข้อมูลล่าสุด

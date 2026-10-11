@@ -10,22 +10,37 @@ from pathlib import Path
 from sqlalchemy import Integer, func, select
 
 from .core import (
-    RAW_DIR, ROOT, _rows, _upsert, batch, daily, fetch, hourly, make_engine,
-    provinces, refresh_daily, run_audit, save_raw,
+    MODEL, PROVISIONAL_MODEL, RAW_DIR, ROOT, _rows, _upsert, batch, daily, fetch,
+    hourly, make_engine, provinces, refresh_daily, run_audit, save_raw,
 )
 
 CLEAN_DIR = ROOT / "data" / "cleaned"
+# Provisional responses are replaced by ERA5 within about a week, so they are not kept in git.
+PROVISIONAL_DIR = ROOT / "data" / "provisional"
 
 
 def plan_missing_days(today: date) -> dict:
-    target = today - timedelta(days=7)
+    """Plan every day after the saved data, plus saved days still waiting for ERA5.
+
+    Stops at yesterday: today's later hours would still be forecasts.
+    """
+    target = today - timedelta(days=1)
     engine = make_engine()
     with engine.connect() as conn:
         latest = {province_id: last_day for province_id, last_day in conn.execute(
             select(daily.c.province_id, func.max(daily.c.weather_date))
             .group_by(daily.c.province_id)
         )}
-    first = min(latest.values()) + timedelta(days=1) if len(latest) == 77 else target
+        first = min(latest.values()) + timedelta(days=1) if len(latest) == 77 else target
+        # Provisional rows only sit in the last few days, so a bounded scan uses the time index.
+        provisional_from = conn.execute(select(func.min(hourly.c.weather_time)).where(
+            hourly.c.weather_time >= datetime.combine(first - timedelta(days=60), time.min),
+            hourly.c.source_model != MODEL,
+        )).scalar_one()
+    if isinstance(provisional_from, str):
+        provisional_from = datetime.fromisoformat(provisional_from)
+    if provisional_from is not None:
+        first = min(first, provisional_from.date())
     return {
         "first": first.isoformat(),
         "target": target.isoformat(),
@@ -47,17 +62,79 @@ def _clean_path(province_id: int, day: date) -> Path:
     return CLEAN_DIR / f"province_{province_id:02d}" / f"{day}.json.gz"
 
 
+def _provisional_path(province_id: int, day: date) -> Path:
+    return PROVISIONAL_DIR / f"province_{province_id:02d}" / f"{day}.json.gz"
+
+
+def _source(province_id: int, day: date) -> tuple[Path, str]:
+    """ERA5 when its raw file exists, otherwise the provisional response."""
+    era5 = _raw_path(province_id, day)
+    return (era5, MODEL) if era5.exists() else (_provisional_path(province_id, day), PROVISIONAL_MODEL)
+
+
+def _complete(payload: dict, province_id: int, day: date) -> bool:
+    try:
+        cleanse_payload(payload, province_id, day)
+    except ValueError:
+        return False
+    return True
+
+
+def _era5_available_through(prov: dict, first: date, target: date) -> date:
+    """Last day of an unbroken run of complete ERA5 days from first (first - 1 if none)."""
+    payload = fetch(prov, first, target)
+    hours = payload.get("hourly", {})
+    last = first - timedelta(days=1)
+    for offset in range((target - first).days + 1):
+        day = first + timedelta(days=offset)
+        span = slice(offset * 24, offset * 24 + 24)
+        day_payload = {**payload, "hourly": {name: values[span] for name, values in hours.items()}}
+        if not _complete(day_payload, prov["province_id"], day):
+            break
+        last = day
+    return last
+
+
+def _write_gz(payload: dict, target: Path) -> None:
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temporary = target.with_suffix(".tmp")
+    with gzip.open(temporary, "wt", encoding="utf-8") as file:
+        json.dump(payload, file, ensure_ascii=False, separators=(",", ":"))
+    temporary.replace(target)
+
+
 def extract_raw(plan: dict) -> dict:
-    fetched = reused = 0
-    for day in _days(plan):
-        for prov in provinces():
-            target = _raw_path(prov["province_id"], day)
-            if target.exists():
+    """Save ERA5 where it is complete; otherwise refresh the provisional response."""
+    fetched = reused = provisional = 0
+    days = list(_days(plan))
+    all_provinces = provinces()
+    era5_through = _era5_available_through(all_provinces[0], days[0], days[-1]) if days else None
+    if days:
+        fetched += 1
+    for day in days:
+        for prov in all_provinces:
+            province_id = prov["province_id"]
+            stale = _provisional_path(province_id, day)
+            if _raw_path(province_id, day).exists():
                 reused += 1
+                stale.unlink(missing_ok=True)
                 continue
-            save_raw(fetch(prov, day, day), prov["province_id"], day, day)
+            if day <= era5_through:
+                payload = fetch(prov, day, day)
+                fetched += 1
+                if _complete(payload, province_id, day):
+                    save_raw(payload, province_id, day, day)
+                    stale.unlink(missing_ok=True)
+                    continue
+            _write_gz(fetch(prov, day, day, PROVISIONAL_MODEL), stale)
             fetched += 1
-    return {"api_requests": fetched, "reused_raw_files": reused}
+            provisional += 1
+    return {
+        "api_requests": fetched,
+        "reused_raw_files": reused,
+        "provisional_files": provisional,
+        "era5_through": era5_through.isoformat() if era5_through else None,
+    }
 
 
 def _normalise(value, name: str, minimum: float, maximum: float) -> float:
@@ -72,8 +149,8 @@ def _normalise(value, name: str, minimum: float, maximum: float) -> float:
     return number
 
 
-def cleanse_payload(payload: dict, province_id: int, day: date) -> list[dict]:
-    rows = _rows(payload, province_id, day, day)
+def cleanse_payload(payload: dict, province_id: int, day: date, model: str = MODEL) -> list[dict]:
+    rows = _rows(payload, province_id, day, day, model)
     for row in rows:
         row["precipitation_mm"] = _normalise(row["precipitation_mm"], "precipitation_mm", 0, 1000)
         row["temperature_c"] = _normalise(row["temperature_c"], "temperature_c", -100, 70)
@@ -83,13 +160,16 @@ def cleanse_payload(payload: dict, province_id: int, day: date) -> list[dict]:
 
 
 def cleanse_data(plan: dict) -> dict:
-    cleaned_rows = 0
+    cleaned_rows = provisional_rows = 0
     for day in _days(plan):
         for prov in provinces():
             province_id = prov["province_id"]
-            with gzip.open(_raw_path(province_id, day), "rt", encoding="utf-8") as source:
+            path, model = _source(province_id, day)
+            with gzip.open(path, "rt", encoding="utf-8") as source:
                 payload = json.load(source)
-            rows = cleanse_payload(payload, province_id, day)
+            rows = cleanse_payload(payload, province_id, day, model)
+            if model != MODEL:
+                provisional_rows += len(rows)
             target = _clean_path(province_id, day)
             target.parent.mkdir(parents=True, exist_ok=True)
             temporary = target.with_suffix(".tmp")
@@ -100,7 +180,7 @@ def cleanse_data(plan: dict) -> dict:
     expected = plan["days"] * 77 * 24
     if cleaned_rows != expected:
         raise ValueError(f"Cleansed {cleaned_rows:,} rows; expected {expected:,}")
-    return {"cleaned_rows": cleaned_rows, "rejected_rows": 0}
+    return {"cleaned_rows": cleaned_rows, "rejected_rows": 0, "provisional_rows": provisional_rows}
 
 
 def load_postgres(plan: dict) -> dict:
@@ -133,7 +213,7 @@ def load_postgres(plan: dict) -> dict:
                     "end_date": day,
                     "row_count": 24,
                     "loaded_at": datetime.now(timezone.utc).replace(tzinfo=None),
-                    "raw_path": str(_raw_path(province_id, day)),
+                    "raw_path": str(_source(province_id, day)[0]),
                 }], ["province_id", "start_date", "end_date"]))
             new_hourly += 24 - existing_hourly
             updated_hourly += existing_hourly

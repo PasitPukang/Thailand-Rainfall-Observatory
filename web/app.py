@@ -203,6 +203,10 @@ def dashboard():
                    updated_hourly_rows, new_daily_rows, finished_at
             FROM pipeline_run_audit ORDER BY finished_at DESC LIMIT 10
         """)).mappings()]
+        provisional_from = conn.execute(text("""
+            SELECT MIN(weather_time) FROM fact_weather_hourly
+            WHERE weather_time >= CURRENT_DATE - 60 AND source_model <> 'era5'
+        """)).scalar_one()
         ranking = [dict(row) for row in conn.execute(text("""
             SELECT p.province_name, COUNT(*) FILTER (WHERE d.rain_class IN ('heavy', 'very_heavy')) AS heavy_days,
                    ROUND(SUM(d.rainfall_mm)::numeric, 1) AS rainfall_mm
@@ -236,6 +240,7 @@ def dashboard():
         "selected_province_id": province_id,
         "selected_name": next((p["province_name"] for p in provinces if p["province_id"] == province_id), "เฉลี่ย 77 จุดตัวแทน"),
         "last_date": last_date.isoformat(),
+        "provisional_from": provisional_from.date().isoformat() if provisional_from else None,
         "counts": counts,
         "latest_run": run_json(runs[0]) if runs else None,
         "runs": [run_json(row) for row in runs],
