@@ -51,7 +51,7 @@
 | PostgreSQL `weather.public.pipeline_run_audit` | สถานะและจำนวนแถวของแต่ละรอบ Airflow |
 | `powerbi/export/mart_weather_daily.csv` | ชุดข้อมูลรายวันสำหรับ Power BI |
 | `powerbi/export/dim_province.csv` | ตารางจังหวัดสำหรับ Power BI |
-| `powerbi/Thailand_Rainfall_2000_2026.pbix` | รายงาน Power BI Desktop พร้อมข้อมูลถึง 26 ก.ย. 2026 |
+| `powerbi/Thailand_Rainfall_2000_2026.pbix` | รายงาน Power BI Desktop พร้อมข้อมูล 1 ม.ค. 2000 – 11 ต.ค. 2026 |
 | `audit/TOPIC_COVERAGE_TH.md` | รายงานตรวจว่าครบองค์ประกอบตามหัวข้อ และ SQL ตรวจเทียบ |
 | `database/export/fact_weather_hourly_YYYY.csv` | ไฟล์รายชั่วโมงแยกปีเมื่อสั่งส่งออก |
 

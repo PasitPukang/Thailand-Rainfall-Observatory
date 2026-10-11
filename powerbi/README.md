@@ -1,10 +1,10 @@
 # Power BI dashboard: ฝนตกหนักและสภาพอากาศรายจังหวัด
 
-ไฟล์รายงานที่พร้อมเปิดคือ [Thailand_Rainfall_2000_2026.pbix](Thailand_Rainfall_2000_2026.pbix) ข้อมูลฝังในรายงานครอบคลุม 1 มกราคม 2018 ถึง **26 กันยายน 2026** (ปี 2026 ยังไม่ครบปี) หน้า **ภาพรวมฝนไทย** แสดงค่าเฉลี่ยต่อจุดตัวแทน กราฟฝนรายปี และอันดับจังหวัด หน้า **แนวโน้มฝนหนักและสภาพอากาศ** มีการ์ด 5 รายการและกราฟ 5 รายการสำหรับวันฝนหนัก ฝนสะสม อุณหภูมิ ความชื้น และลม พร้อมตัวเลือกจังหวัด ไฟล์ [Thailand_Rainfall_2000_2026.pbip](Thailand_Rainfall_2000_2026.pbip) และโฟลเดอร์ Report/SemanticModel เป็นโครงการต้นฉบับสำหรับแก้ layout เพิ่มเติม
+ไฟล์รายงานที่พร้อมเปิดคือ [Thailand_Rainfall_2000_2026.pbix](Thailand_Rainfall_2000_2026.pbix) ข้อมูลฝังในรายงานครอบคลุม 1 มกราคม 2000 ถึง **11 ตุลาคม 2026** (753,137 วันจังหวัด; ปี 2026 ยังไม่ครบปี และ 6–11 ต.ค. เป็นข้อมูลชั่วคราวที่จะถูกแทนด้วย ERA5) หน้า **ภาพรวมฝนไทย** แสดงค่าเฉลี่ยต่อจุดตัวแทน กราฟฝนรายปี และอันดับจังหวัด หน้า **แนวโน้มฝนหนักและสภาพอากาศ** มีการ์ด 5 รายการและกราฟ 5 รายการสำหรับวันฝนหนัก ฝนสะสม อุณหภูมิ ความชื้น และลม พร้อมตัวเลือกจังหวัด ไฟล์ [Thailand_Rainfall_2000_2026.pbip](Thailand_Rainfall_2000_2026.pbip) และโฟลเดอร์ Report/SemanticModel เป็นโครงการต้นฉบับสำหรับแก้ layout เพิ่มเติม
 
 รายงานอ่าน `export/dim_province.csv` และ `export/mart_weather_daily.csv` ในโฟลเดอร์นี้ หลัง Airflow ทำงาน CSV จะถูกสร้างใหม่จาก PostgreSQL แล้วให้กด **Home → Refresh** ใน Power BI Desktop เพื่ออัปเดตภาพ ตัวเลือกจังหวัดอยู่มุมขวาบนของหน้า เลือก **All** เพื่อดูทุกจังหวัด หรือเลือกจังหวัดหนึ่งเพื่อดูสถิติที่จุดตัวแทนของจังหวัดนั้น Power BI Service ต้องมีการตั้งค่าแหล่งข้อมูลและการรีเฟรชเพิ่มเติมก่อนเผยแพร่
 
-**หลัง clone ไปเครื่องอื่น:** PBIX มีข้อมูลฝังอยู่ จึงเปิดดูได้ทันที แต่ก่อน Refresh ให้เปิด **File → Options and settings → Data source settings → Change Source** แล้วเลือก `powerbi/export/dim_province.csv` และ `powerbi/export/mart_weather_daily.csv` ในโฟลเดอร์ที่ clone ใหม่ แหล่งข้อมูล PBIP ปัจจุบันใช้พาธ `R:\powerbi\export\...` ของเครื่องจัดทำ จึงต้องเปลี่ยนแหล่งข้อมูลสองตารางก่อนโหลดบนเครื่องอื่น ไฟล์ PBIX และ CSV ชุดใหญ่เก็บด้วย Git LFS; ให้รัน `git lfs pull` หากเห็นเพียงไฟล์ pointer
+**หลัง clone ไปเครื่องอื่น:** PBIX มีข้อมูลฝังอยู่ จึงเปิดดูได้ทันที แต่ก่อน Refresh ให้เปิด **File → Options and settings → Data source settings → Change Source** แล้วเลือก `powerbi/export/dim_province.csv` และ `powerbi/export/mart_weather_daily.csv` ในโฟลเดอร์ที่ clone ใหม่ แหล่งข้อมูลใน PBIX ชี้ไปที่ `D:\Thailand-Rainfall-Observatory\powerbi\export\...` และใน PBIP ยังเป็น `R:\powerbi\export\...` ซึ่งเป็นพาธของเครื่องจัดทำ จึงต้องเปลี่ยนแหล่งข้อมูลสองตารางก่อนโหลดบนเครื่องอื่น ไฟล์ PBIX และ CSV ชุดใหญ่เก็บด้วย Git LFS; ให้รัน `git lfs pull` หากเห็นเพียงไฟล์ pointer
 
 เปิดตรวจ PBIP ใน Power BI Desktop แล้วรีเฟรช CSV สำเร็จ จากนั้นบันทึก PBIX ใหม่ ผลตรวจตัวเลขและคำอธิบายปีที่ยังไม่ครบอยู่ใน [รายงานตรวจความตรงตามหัวข้อ](../audit/TOPIC_COVERAGE_TH.md) การเปรียบเทียบปี 2026 กับปีก่อนแบบ **ช่วงวันเท่ากัน** อยู่ในเว็บวิเคราะห์
 
@@ -19,7 +19,7 @@
 ```dax
 Date =
 ADDCOLUMNS(
-    CALENDAR(DATE(2018, 1, 1), MAX(mart_weather_daily[weather_date])),
+    CALENDAR(DATE(2000, 1, 1), MAX(mart_weather_daily[weather_date])),
     "Year", YEAR([Date]),
     "MonthNo", MONTH([Date]),
     "YearMonth", FORMAT([Date], "YYYY-MM")
