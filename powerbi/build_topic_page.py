@@ -11,7 +11,7 @@ from build_layout_2026 import literal, textbox
 
 
 ROOT = Path(__file__).resolve().parent
-PAGES = ROOT / "Thailand_Rainfall_2018_2026.Report/definition/pages"
+PAGES = ROOT / "Thailand_Rainfall_2000_2026.Report/definition/pages"
 OVERVIEW = "7c266bc4c4c4cb19068e"
 TOPIC = hashlib.sha1(b"thailand-rainfall-heavy-weather-topic-page").hexdigest()[:20]
 SOURCE_VISUALS = PAGES / OVERVIEW / "visuals"

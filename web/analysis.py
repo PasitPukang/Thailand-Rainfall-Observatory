@@ -8,7 +8,7 @@ from collections import defaultdict
 from datetime import date
 
 
-BASELINE_YEARS = tuple(range(2018, 2026))
+BASELINE_YEARS = tuple(range(2000, 2026))
 
 
 def _blank() -> dict:

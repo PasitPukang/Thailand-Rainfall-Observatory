@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
-REPORT = ROOT / "Thailand_Rainfall_2018_2026.Report" / "definition"
+REPORT = ROOT / "Thailand_Rainfall_2000_2026.Report" / "definition"
 PAGE = "7c266bc4c4c4cb19068e"
 PAGE_DIR = REPORT / "pages" / PAGE
 TITLE_ID = "e0fd050fcd83dcf0c326"

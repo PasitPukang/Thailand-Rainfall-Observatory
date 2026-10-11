@@ -23,7 +23,7 @@ app = Flask(__name__)
 DOWNLOADS = {
     "daily_csv": ROOT / "powerbi/export/mart_weather_daily.csv",
     "provinces_csv": ROOT / "powerbi/export/dim_province.csv",
-    "powerbi": ROOT / "powerbi/Thailand_Rainfall_2018_2026.pbix",
+    "powerbi": ROOT / "powerbi/Thailand_Rainfall_2000_2026.pbix",
     "project_guide": ROOT / "README.md",
     "design": ROOT / "DESIGN.md",
     "database_guide": ROOT / "database/README_TH.md",
@@ -71,7 +71,7 @@ def today_rain_outlook(rows: list[dict], today: date, selected_province_id: int 
         "sample_count": total,
         "window_days": 15,
         "rain_threshold_mm": 0.1,
-        "history_start_year": 2018,
+        "history_start_year": 2000,
         "history_end_year": 2025,
         "basis": "one_province_point" if selected_province_id is not None else "mean_province_point",
         "historical_data_through": last_date.isoformat(),
@@ -211,7 +211,7 @@ def dashboard():
         """)).mappings()]
         history_rain = [dict(row) for row in conn.execute(text("""
             SELECT weather_date, rainfall_mm FROM mart_weather_daily
-            WHERE weather_date >= DATE '2018-01-01'
+            WHERE weather_date >= DATE '2000-01-01'
               AND weather_date < DATE '2026-01-01'
               AND (:province_id IS NULL OR province_id = :province_id)
               AND EXTRACT(MONTH FROM weather_date) IN (:month_a, :month_b, :month_c)

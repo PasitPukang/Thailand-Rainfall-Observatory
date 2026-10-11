@@ -32,12 +32,12 @@
       <div id="error" class="error-banner hidden" role="alert"></div>
 
       <section id="dashboard" class="view active">
-        <div class="page-head"><div><p class="eyebrow">WEATHER INTELLIGENCE / THAILAND</p><h1>ฝนและสภาพอากาศ<br><em>รายจังหวัด</em></h1><p class="lead">ข้อมูลแบบจำลอง ERA5 ณ จุดตัวแทน 77 จังหวัด ตั้งแต่ปี 2018</p></div><div class="control-card"><label for="province">พื้นที่วิเคราะห์</label><select id="province"><option value="">เฉลี่ย 77 จุดตัวแทน</option></select><small>เลือกจังหวัดเพื่อดูค่าที่จุดตัวแทนของจังหวัดนั้น</small></div></div>
+        <div class="page-head"><div><p class="eyebrow">WEATHER INTELLIGENCE / THAILAND</p><h1>ฝนและสภาพอากาศ<br><em>รายจังหวัด</em></h1><p class="lead">ข้อมูลแบบจำลอง ERA5 ณ จุดตัวแทน 77 จังหวัด ตั้งแต่ปี 2000</p></div><div class="control-card"><label for="province">พื้นที่วิเคราะห์</label><select id="province"><option value="">เฉลี่ย 77 จุดตัวแทน</option></select><small>เลือกจังหวัดเพื่อดูค่าที่จุดตัวแทนของจังหวัดนั้น</small></div></div>
         <article class="today-card" aria-live="polite">
           <div class="today-copy"><p class="eyebrow">TODAY / RAIN OUTLOOK</p><h2>วันนี้ฝนจะตกไหม?</h2><p id="today-place" class="today-place">กำลังคำนวณจากข้อมูลย้อนหลัง…</p><p id="today-explanation" class="today-explanation"></p></div>
           <div class="today-result"><span id="today-date" class="today-date">—</span><strong id="today-answer">—</strong><div class="today-probability"><span id="today-probability">—</span><small>โอกาสจากสถิติย้อนหลัง</small></div><div class="today-meter"><span id="today-meter-fill"></span></div></div>
         </article>
-        <p class="today-caveat">ประมาณจากความถี่วันที่มีฝน ≥ 0.1 มม. ในช่วง ±15 วันของวันที่เดียวกัน ปี 2018–2025 · เป็นแนวโน้มตามฤดูกาล ไม่ใช่พยากรณ์อากาศสด</p>
+        <p class="today-caveat">ประมาณจากความถี่วันที่มีฝน ≥ 0.1 มม. ในช่วง ±15 วันของวันที่เดียวกัน ปี 2000–2026 · เป็นแนวโน้มตามฤดูกาล ไม่ใช่พยากรณ์อากาศสด</p>
         <div class="stat-grid">
           <article class="stat-card"><span>ฝนสะสม 30 วันล่าสุด</span><strong id="stat-rain30">—</strong><small>มม. ต่อจุดตัวแทน</small></article>
           <article class="stat-card"><span>ฝนสะสมปีปัจจุบัน</span><strong id="stat-ytd">—</strong><small>มม. ตั้งแต่ 1 ม.ค.</small></article>
@@ -49,7 +49,7 @@
           <article class="panel"><div class="panel-head"><div><p class="eyebrow">LONG TERM</p><h2>ฝนสะสมรายปี</h2></div><span class="unit">มม. / ปี</span></div><div id="annual-chart" class="chart" aria-label="กราฟฝนสะสมรายปี"></div><p class="panel-note">ปีล่าสุดยังไม่ครบทั้งปี</p></article>
         </div>
         <div class="chart-grid lower">
-          <article class="panel"><div class="panel-head"><div><p class="eyebrow">SEASONAL PATTERN</p><h2>ค่ากลางฝนรายเดือน</h2></div><span class="unit">2018–2025</span></div><div id="climate-chart" class="chart" aria-label="กราฟค่ากลางฝนรายเดือน"></div></article>
+          <article class="panel"><div class="panel-head"><div><p class="eyebrow">SEASONAL PATTERN</p><h2>ค่ากลางฝนรายเดือน</h2></div><span class="unit">2000–2025</span></div><div id="climate-chart" class="chart" aria-label="กราฟค่ากลางฝนรายเดือน"></div></article>
           <article class="panel"><div class="panel-head"><div><p class="eyebrow">PROVINCE COMPARISON</p><h2>จังหวัดที่พบวันฝนหนักบ่อย</h2></div><span class="unit">สะสมทุกปี</span></div><div id="ranking" class="ranking"></div><p class="panel-note">นับวันที่ฝน ≥ 35.1 มม. ณ จุดตัวแทนของจังหวัด</p></article>
         </div>
       </section>
@@ -60,13 +60,13 @@
         <div class="callout"><strong id="analysis-basis">กำลังโหลดขอบเขตข้อมูล…</strong><p>ฝนหนัก: ตั้งแต่ 35.1 มม./วัน · ฝนหนักมาก: ตั้งแต่ 90.1 มม./วัน จากชั่วโมงที่ API ติดป้าย 00:00–23:00 น. · กราฟปี 2026 แสดงข้อมูลเพียงบางส่วน การเปรียบเทียบด้านล่างใช้วันปฏิทินช่วงเดียวกันและตัด 29 ก.พ. ออก</p></div>
         <div class="stat-grid">
           <article class="stat-card"><span id="heavy-current-label">วันฝนหนักปีล่าสุด · ช่วงเดียวกัน</span><strong id="heavy-current">—</strong><small id="heavy-unit">วันต่อจุดตัวแทน</small></article>
-          <article class="stat-card"><span>ค่ากลางปี 2018–2025 · ช่วงเดียวกัน</span><strong id="heavy-baseline">—</strong><small>วันฝนหนักต่อจุดตัวแทน</small></article>
+          <article class="stat-card"><span>ค่ากลางปี 2000–2025 · ช่วงเดียวกัน</span><strong id="heavy-baseline">—</strong><small>วันฝนหนักต่อจุดตัวแทน</small></article>
           <article class="stat-card"><span>ต่างจากค่ากลางย้อนหลัง</span><strong id="heavy-change">—</strong><small id="heavy-period">เปรียบเทียบช่วงเดียวกัน</small></article>
           <article class="stat-card"><span>วันฝนหนักมากปีล่าสุด · ช่วงเดียวกัน</span><strong id="very-heavy-current">—</strong><small>วันต่อจุดตัวแทน</small></article>
         </div>
         <div class="chart-grid">
           <article class="panel wide"><div class="panel-head"><div><p class="eyebrow">HEAVY RAIN BY YEAR</p><h2>วันฝนหนักรายปี</h2></div><span class="unit">วัน / จุด / ปี</span></div><div id="heavy-annual-chart" class="chart" aria-label="กราฟจำนวนวันฝนหนักรายปี"></div><p class="panel-note">ปีล่าสุดที่ยังไม่ครบปีใช้สีอ่อน และควรอ่านคู่กับตารางเปรียบเทียบช่วงเดียวกันด้านล่าง</p></article>
-          <article class="panel"><div class="panel-head"><div><p class="eyebrow">SEASONAL HEAVY RAIN</p><h2>เดือนที่พบฝนหนักบ่อย</h2></div><span class="unit">เฉลี่ย 2018–2025</span></div><div id="heavy-month-chart" class="chart" aria-label="กราฟวันฝนหนักเฉลี่ยรายเดือน"></div><p class="panel-note">จำนวนวันฝนหนักเฉลี่ยต่อปี ณ จุดตัวแทนที่เลือก</p></article>
+          <article class="panel"><div class="panel-head"><div><p class="eyebrow">SEASONAL HEAVY RAIN</p><h2>เดือนที่พบฝนหนักบ่อย</h2></div><span class="unit">เฉลี่ย 2000–2025</span></div><div id="heavy-month-chart" class="chart" aria-label="กราฟวันฝนหนักเฉลี่ยรายเดือน"></div><p class="panel-note">จำนวนวันฝนหนักเฉลี่ยต่อปี ณ จุดตัวแทนที่เลือก</p></article>
         </div>
         <article class="panel comparison-panel"><div class="panel-head"><div><p class="eyebrow">MATCHED PERIOD</p><h2>เทียบช่วง 1 ม.ค. ถึงวันเดียวกันของแต่ละปี</h2></div><span id="comparison-range" class="unit">—</span></div><div class="history-scroll"><table class="analysis-table"><thead><tr><th>ปี</th><th>วันฝนหนัก</th><th>วันฝนหนักมาก</th><th>ฝนสะสม (มม.)</th><th>อุณหภูมิเฉลี่ย (°C)</th></tr></thead><tbody id="comparison-rows"></tbody></table></div><p class="panel-note">ตัวเลขเมื่อเลือกภาพรวมเป็นค่าเฉลี่ยต่อจุดตัวแทน ไม่ใช่ผลรวมปริมาณฝนของประเทศ</p></article>
         <div class="weather-grid">
@@ -74,12 +74,12 @@
           <article class="panel"><div class="panel-head"><div><p class="eyebrow">HUMIDITY</p><h2>ความชื้นเฉลี่ยรายปี</h2></div><span class="unit">%</span></div><div id="humidity-chart" class="chart" aria-label="กราฟความชื้นเฉลี่ยรายปี"></div></article>
           <article class="panel"><div class="panel-head"><div><p class="eyebrow">WIND</p><h2>ความเร็วลมสูงสุดรายวัน · เฉลี่ยรายปี</h2></div><span class="unit">กม./ชม.</span></div><div id="wind-chart" class="chart" aria-label="กราฟลมรายปี"></div></article>
         </div>
-        <div class="callout bottom-note"><strong>ขอบเขตการตีความ</strong><p>ERA5 เป็นข้อมูลประมาณค่าจากแบบจำลองที่ผสานข้อมูลสังเกต ณ จุดพิกัดตัวแทนหนึ่งจุดต่อจังหวัด ไม่ใช่ค่าฝนเฉลี่ยทั้งจังหวัดหรือข้อมูลสถานีโดยตรง ช่วง 2018–2026 ใช้อธิบายแนวโน้มในชุดข้อมูลนี้ ยังไม่เพียงพอสำหรับสรุปการเปลี่ยนแปลงภูมิอากาศระยะยาว</p></div>
+        <div class="callout bottom-note"><strong>ขอบเขตการตีความ</strong><p>ERA5 เป็นข้อมูลประมาณค่าจากแบบจำลองที่ผสานข้อมูลสังเกต ณ จุดพิกัดตัวแทนหนึ่งจุดต่อจังหวัด ไม่ใช่ค่าฝนเฉลี่ยทั้งจังหวัดหรือข้อมูลสถานีโดยตรง ช่วง 2000–2026 ใช้อธิบายแนวโน้มในชุดข้อมูลนี้ ยังไม่เพียงพอสำหรับสรุปการเปลี่ยนแปลงภูมิอากาศระยะยาว</p></div>
       </section>
 
       <section id="forecast" class="view">
-        <div class="section-intro"><p class="eyebrow">SEASONAL ESTIMATE</p><h1>แนวโน้มและ<br><em>ประมาณการฝน</em></h1><p class="lead">ประมาณปริมาณฝนรวมรายเดือนจากค่ากลางของเดือนเดียวกันในปี 2018–2025</p></div>
-        <div class="callout"><strong>วิธีอ่านค่า</strong><p>ผล “วันนี้ฝนจะตกไหม” อยู่ในหน้าภาพรวมและคำนวณจากความถี่วันที่มีฝนย้อนหลัง ส่วนค่าด้านล่างเป็นค่าประมาณปริมาณฝนรายเดือนตามฤดูกาล ไม่ใช่พยากรณ์อากาศสด ช่วงต่ำ–สูงแสดงเปอร์เซ็นไทล์ 10–90 ของ 8 ปีย้อนหลัง ค่าคลาดเคลื่อนเป็นผลทดสอบย้อนหลังแบบเว้นทีละปี</p></div>
+        <div class="section-intro"><p class="eyebrow">SEASONAL ESTIMATE</p><h1>แนวโน้มและ<br><em>ประมาณการฝน</em></h1><p class="lead">ประมาณปริมาณฝนรวมรายเดือนจากค่ากลางของเดือนเดียวกันในปี 2000–2025</p></div>
+        <div class="callout"><strong>วิธีอ่านค่า</strong><p>ผล “วันนี้ฝนจะตกไหม” อยู่ในหน้าภาพรวมและคำนวณจากความถี่วันที่มีฝนย้อนหลัง ส่วนค่าด้านล่างเป็นค่าประมาณปริมาณฝนรายเดือนตามฤดูกาล ไม่ใช่พยากรณ์อากาศสด ช่วงต่ำ–สูงแสดงเปอร์เซ็นไทล์ 10–90 ของ 26 ปีย้อนหลัง (2000–2025) ค่าคลาดเคลื่อนเป็นผลทดสอบย้อนหลังแบบเว้นทีละปี</p></div>
         <div id="forecast-cards" class="forecast-grid"></div>
         <article class="panel forecast-method"><p class="eyebrow">METHOD</p><h2>คำนวณอย่างไร</h2><ol><li>รวมฝนรายวันเป็นยอดรายเดือนของแต่ละปี</li><li>เลือกเดือนปฏิทินเดียวกับเดือนที่จะประมาณ และใช้เฉพาะปีที่มีข้อมูลครบเดือน</li><li>ใช้ค่ามัธยฐานเป็นค่าประมาณ และเปอร์เซ็นไทล์ 10–90 เป็นช่วงอ้างอิง</li><li>คำนวณ MAE โดยทำนายแต่ละปีจากปีอื่นอีก 7 ปี แล้ววัดความคลาดเคลื่อน</li></ol><p class="panel-note">พิกัดหนึ่งจุดไม่แทนค่าเฉลี่ยทั้งจังหวัด และแบบจำลองย้อนหลัง ERA5 ไม่ใช่ข้อมูลตรวจวัดสถานีโดยตรง</p></article>
       </section>
